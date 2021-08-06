@@ -1,13 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package prueba2;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 /**
  *
@@ -37,18 +31,6 @@ public class Persona {
         return bd.doubleValue();
     }
     
-    public static void main(String[] args) {
-        String nombre = "Maria";
-        String apellido = "Salazar";
-        int edad = 24;
-        int peso = 67;
-        double estatura = 1.68;
-        double imcEsperado = 23.74d;
-       
-        Persona persona = new Persona(nombre, apellido, edad, peso, estatura);
-        System.out.println(persona.calcularIMC());
-    }
-
     public String getNombreCompleto() {
         return nombreCompleto;
     }
