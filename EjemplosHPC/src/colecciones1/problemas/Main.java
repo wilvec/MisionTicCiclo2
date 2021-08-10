@@ -20,7 +20,7 @@ public class Main {
 
     public static void main(String[] args) {
         ArrayList<Integer> lista = new ArrayList<Integer>();
-        /*
+        
         lista.add(1);
         lista.add(2);
         lista.add(1);
@@ -35,7 +35,7 @@ public class Main {
         System.out.println(listaSD);
         
         
-         */
+         
 
  /*
         List<Integer> listaA = Arrays.asList(1,2,3,4);
@@ -44,15 +44,15 @@ public class Main {
         List<Integer> listaC = obtenerIguales(listaA, listaB);
         System.out.println(listaC);
          */
- /*
+  /*
         List<String> listaOriginal = Arrays.asList("PEDRO", "MARIA", "JUAN", "LAURA");
         System.out.println("Lista Original: "+listaOriginal);
         System.out.println();
         List<String> listaInvertida = obtenerInversa(listaOriginal);
-        System.out.println("Lista Invertida: "+listaInvertida);
-         */
- 
-         /*
+        System.out.println("Lista Invertida: "+listaInvertida);      
+ */
+         
+  /*
         ArrayList<String> listaOriginal = new ArrayList<String>();
         listaOriginal.add("PEDRO");
         listaOriginal.add("MARIA");
@@ -63,7 +63,7 @@ public class Main {
         System.out.println();
         List<String> listaInvertida = obtenerInversaManual(listaOriginal);
         System.out.println("Lista Invertida: " + listaInvertida);
-        */
+         */
                 //K       V
         HashMap<String, String> mapaA = new HashMap<String, String>();
         HashMap<String, String> mapaB = new HashMap<String, String>();
@@ -78,6 +78,7 @@ public class Main {
         
         System.out.println(verificador(mapaA, mapaB));
 
+       
     }
 
     public static ArrayList<Integer> quitarDuplicados(ArrayList<Integer> lista) {
