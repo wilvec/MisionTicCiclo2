@@ -22,6 +22,7 @@ public class NominaControlador {
     public List<Departamento> getDepartamentos() {
         return departamentos;
     }
+    
     private final List<Salario> salarios;
 
     public List<Salario> getSalarios() {

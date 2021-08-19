@@ -100,6 +100,11 @@ public class Persona {
     public void setDepartamento(Departamento departamento) {
         this.departamento = departamento;
     }
+
+    @Override
+    public String toString() {
+        return "Persona{" + "tipoDocumento=" + tipoDocumento + ", documentoIdentidad=" + documentoIdentidad + ", primerNombre=" + primerNombre + ", segundoNombre=" + segundoNombre + ", apellido=" + apellido + ", fechaNacimiento=" + fechaNacimiento + ", sexo=" + sexo + ", departamento=" + departamento + '}';
+    }
     
     
     

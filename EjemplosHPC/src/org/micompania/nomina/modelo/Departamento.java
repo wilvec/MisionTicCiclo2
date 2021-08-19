@@ -47,6 +47,11 @@ public class Departamento {
         return personas;
     }
 
+    @Override
+    public String toString() {
+        return this.nombre+" ("+this.codigo+")";
+    }
+
    
     
     

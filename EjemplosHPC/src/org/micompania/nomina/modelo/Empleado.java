@@ -66,6 +66,11 @@ public class Empleado extends Persona {
     public void setGrado(Long grado) {
         this.grado = grado;
     }
-    
+
+    @Override
+    public String toString() {
+        return super.toString()+"Empleado{" + "codigoEmpleado=" + codigoEmpleado + ", usuario=" + usuario + ", password=" + password + ", grado=" + grado + '}';
+    }
+
     
 }

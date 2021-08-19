@@ -14,6 +14,7 @@ import org.micompania.nomina.controlador.NominaControlador;
 public class VentanaPrincipal extends javax.swing.JFrame {
     private NominaControlador nominaActual;
     private VentanaDepartamento vDepto;
+    private VentanaEmpleado vEmpleado;
     /**
      * Creates new form VentanaPrincipal
      */
@@ -25,6 +26,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         this.nominaActual = nominaActual;
         initComponents();
         vDepto = new VentanaDepartamento(nominaActual);
+        vEmpleado = new VentanaEmpleado(nominaActual);
         
     }
     
@@ -80,9 +82,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
 
         jButton2.setText("Agregar Empleado");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
             }
         });
 
@@ -180,10 +182,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -211,6 +209,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         vDepto.setVisible(true);
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        vEmpleado.llenarListaDepartamentos();
+        vEmpleado.setVisible(true);
+    }//GEN-LAST:event_jButton2MouseClicked
 
     /**
      * @param args the command line arguments
