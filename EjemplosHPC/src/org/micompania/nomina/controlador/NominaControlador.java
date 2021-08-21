@@ -52,4 +52,10 @@ public class NominaControlador {
     public void agregarSalario(Salario s){
         salarios.add(s);
     }
+    
+    public void guardarEmpleado(Empleado emp){
+        String sql = "INSERT INTO EMPLEADO VALUES (";
+        sql+=emp.getCodigoEmpleado()+",'"+emp.getPrimerNombre()+"',";
+        sql+=")";
+    }
 }
