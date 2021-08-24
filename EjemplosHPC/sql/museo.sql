@@ -1,4 +1,5 @@
-CREATE SCHEMA museo;
+drop schema museo;
+CREATE SCHEMA IF NOT EXISTS museo;
 USE museo;
 DROP TABLE IF  EXISTS museo;
 DROP TABLE IF  EXISTS exposicion;

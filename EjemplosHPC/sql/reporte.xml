@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+xmlns:html="http://www.w3.org/TR/REC-html40">
+<Worksheet ss:Name="Table1">
+	<Table>
+		<Column ss:Index="2" ss:AutoFitWidth="0" ss:Width="110"/>
+		<Row>
+			<Cell><Data ss:Type="String">Código</Data></Cell>
+			<Cell><Data ss:Type="String">Título</Data></Cell>
+			<Cell><Data ss:Type="String">Año de publicación</Data></Cell>
+		</Row>
+
+		<Row>
+			<Cell><Data ss:Type="Number">1001</Data></Cell>
+			<Cell><Data ss:Type="String">Cien años de soledad</Data></Cell>
+			<Cell><Data ss:Type="Number">1967</Data></Cell>
+		</Row>
+		<Row>
+			<Cell><Data ss:Type="Number">1004</Data></Cell>
+			<Cell><Data ss:Type="String">Condores no entierran todos los días</Data></Cell>
+			<Cell><Data ss:Type="Number">1971</Data></Cell>
+		</Row>
+		<Row>
+			<Cell><Data ss:Type="Number">1006</Data></Cell>
+			<Cell><Data ss:Type="String">El olvido que seremos</Data></Cell>
+			<Cell><Data ss:Type="Number">2005</Data></Cell>
+		</Row>
+		<Row>
+			<Cell><Data ss:Type="Number">1007</Data></Cell>
+			<Cell><Data ss:Type="String">El camino del arquero</Data></Cell>
+			<Cell><Data ss:Type="Number">2017</Data></Cell>
+		</Row>
+		<Row>
+			<Cell><Data ss:Type="Number">1008</Data></Cell>
+			<Cell><Data ss:Type="String">El amor en los tiempos del cólera</Data></Cell>
+			<Cell><Data ss:Type="Number">1985</Data></Cell>
+		</Row>	</Table>
+</Worksheet>
+</Workbook>
