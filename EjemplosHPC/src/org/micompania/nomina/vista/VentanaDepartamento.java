@@ -1,40 +1,130 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.micompania.nomina.vista;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
+import org.micompania.nomina.util.UtilidadesVista;
+import org.micompania.nomina.vista.modelos.ModeloTablaDepto;
 
 /**
  *
  * @author GTX1050
  */
 public class VentanaDepartamento extends javax.swing.JFrame {
+
     private NominaControlador nomina;
-    /**
-     * Creates new form Departamento
-     */
+    private Departamento deptoSeleccionado;
+    private boolean estaEnModoEdicion;
+
     public VentanaDepartamento() {
         initComponents();
+        this.cargarDatosTabla();
+        estaEnModoEdicion = false;
+        ponerModoEdicion();
     }
 
     public VentanaDepartamento(NominaControlador nomina) {
         this.nomina = nomina;
         initComponents();
+        this.cargarDatosTabla();
+        estaEnModoEdicion = false;
+        ponerModoEdicion();
     }
+
     public NominaControlador getNomina() {
         return nomina;
+    }
+
+    private void cargarDatosTabla() {
+        ModeloTablaDepto model = new ModeloTablaDepto(nomina.getDepartamentos());
+        tblDepartamento.setModel(model);
+        tblDepartamento.revalidate();
+    }
+
+    private void limpiarComponentes() {
+        UtilidadesVista.limpiarComponenteTexto(txtCodigo, txtNombre);
+    }
+
+    private void ponerModoEdicion() {
+        btnAgregar.setVisible(!estaEnModoEdicion);
+        btnCancelarEdicion.setVisible(estaEnModoEdicion);
+        btnEliminar.setVisible(estaEnModoEdicion);
+        btnModificar.setVisible(estaEnModoEdicion);
+        if (estaEnModoEdicion) {
+            if (deptoSeleccionado != null) {
+                txtCodigo.setText(deptoSeleccionado.getCodigo());
+                txtNombre.setText(deptoSeleccionado.getNombre());
+            }
+        } else {
+            this.limpiarComponentes();
+        }
+    }
+
+    private void agregar() {
+        String codigo = txtCodigo.getText();
+        String nombre = txtNombre.getText();
+        Departamento depto = new Departamento();
+        depto.setCodigo(codigo);
+        depto.setNombre(nombre);
+        this.nomina.agregarDepartamento(depto);
+        JOptionPane.showMessageDialog(this, "Se agregó correctamente el departamento",
+                "Agregar Departamento", JOptionPane.INFORMATION_MESSAGE);
+        UtilidadesVista.limpiarComponenteTexto(txtCodigo, txtNombre);
+        this.cargarDatosTabla();
+    }
+
+    private void modificar() {
+        int rm = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
+                "Modificar Departamento", JOptionPane.OK_CANCEL_OPTION);
+        if (rm == JOptionPane.OK_OPTION) {
+            int indice = this.nomina.getDepartamentos().indexOf(deptoSeleccionado);
+            deptoSeleccionado.setCodigo(txtCodigo.getText());
+            deptoSeleccionado.setNombre(txtNombre.getText());
+            this.nomina.actualizarDepartamento(deptoSeleccionado, indice);
+            estaEnModoEdicion = false;
+            this.ponerModoEdicion();
+            this.limpiarComponentes();
+            this.cargarDatosTabla();
+            this.tblDepartamento.revalidate();
+            JOptionPane.showMessageDialog(this, "Se modificó la información",
+                    "Modificar Departamento", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void eliminar() {
+        int rm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el departamento seleccionado?",
+                "Eliminar Departamento", JOptionPane.OK_CANCEL_OPTION);
+        if (rm == JOptionPane.OK_OPTION) {
+            this.nomina.eliminarDepartamento(deptoSeleccionado);
+            estaEnModoEdicion = false;
+            this.ponerModoEdicion();
+            this.limpiarComponentes();
+            this.cargarDatosTabla();
+            JOptionPane.showMessageDialog(this, "Se eliminó la información",
+                    "Eliminar Departamento", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void setNomina(NominaControlador nomina) {
         this.nomina = nomina;
     }
-    
-    
+
+    public Departamento getDeptoSeleccionado() {
+        return deptoSeleccionado;
+    }
+
+    public void setDeptoSeleccionado(Departamento deptoSeleccionado) {
+        this.deptoSeleccionado = deptoSeleccionado;
+    }
+
+    public boolean isEstaEnModoEdicion() {
+        return estaEnModoEdicion;
+    }
+
+    public void setEstaEnModoEdicion(boolean estaEnModoEdicion) {
+        this.estaEnModoEdicion = estaEnModoEdicion;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -46,41 +136,74 @@ public class VentanaDepartamento extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblCodigo = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        lblNombre = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JButton();
+        btoSalir = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblDepartamento = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnCancelarEdicion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setText("AGREGAR DEPARTAMENTO");
 
-        jLabel2.setText("Código");
+        lblCodigo.setText("Código");
 
-        jLabel3.setText("Nombre");
+        lblNombre.setText("Nombre");
 
-        jButton1.setText("Agregar");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnAgregar.setText("Agregar");
+        btnAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                btnAgregarMouseClicked(evt);
             }
         });
 
-        jButton2.setText("Salir");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        btoSalir.setText("Salir");
+        btoSalir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton2MouseClicked(evt);
+                btoSalirMouseClicked(evt);
             }
         });
 
-        jButton3.setText("MostrarDepartamentos");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblDepartamento.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton3MouseClicked(evt);
+                tblDepartamentoMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tblDepartamento);
+
+        jLabel2.setText("Departamentos existentes (Doble click para seleccionar)");
+
+        btnModificar.setText("Modificar");
+        btnModificar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnModificarMouseClicked(evt);
+            }
+        });
+
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnEliminarMouseClicked(evt);
+            }
+        });
+
+        btnCancelarEdicion.setText("Cancelar Edicion");
+        btnCancelarEdicion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCancelarEdicionMouseClicked(evt);
             }
         });
 
@@ -95,21 +218,28 @@ public class VentanaDepartamento extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addGap(23, 23, 23)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(55, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(71, 71, 71)
-                .addComponent(jButton1)
-                .addGap(27, 27, 27)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(27, 27, 27))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(198, 198, 198)
+                        .addComponent(btoSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAgregar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnModificar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEliminar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelarEdicion))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCodigo)
+                            .addComponent(lblNombre))
+                        .addGap(23, 23, 23)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,91 +248,79 @@ public class VentanaDepartamento extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(lblCodigo)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(lblNombre)
                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addGap(32, 32, 32))
+                    .addComponent(btnAgregar)
+                    .addComponent(btnModificar)
+                    .addComponent(btnEliminar)
+                    .addComponent(btnCancelarEdicion))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btoSalir)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+    private void btoSalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btoSalirMouseClicked
         setVisible(false);
-    }//GEN-LAST:event_jButton2MouseClicked
+    }//GEN-LAST:event_btoSalirMouseClicked
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        String codigo = txtCodigo.getText();
-        String nombre = txtNombre.getText();
-        Departamento depto = new Departamento();
-        depto.setCodigo(codigo);
-        depto.setNombre(nombre);
-        this.nomina.agregarDepartamento(depto);
-        //JOptionPane muestra mensajes informativos/advertencia/error
-        JOptionPane.showMessageDialog(this, "Se agregó correctamente el departamento", "Agregar Departamento", JOptionPane.INFORMATION_MESSAGE);
-        txtCodigo.setText("");
-        txtNombre.setText("");
-        
-    }//GEN-LAST:event_jButton1MouseClicked
+    private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseClicked
+        this.agregar();
+    }//GEN-LAST:event_btnAgregarMouseClicked
 
-    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
-        VentanaMostrarDepartamento vmostrarDepto = new VentanaMostrarDepartamento(this.nomina);
-        vmostrarDepto.mostrarDepartamentos();
-        vmostrarDepto.setVisible(true);
-    }//GEN-LAST:event_jButton3MouseClicked
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaDepartamento.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void tblDepartamentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDepartamentoMouseClicked
+        if (evt.getClickCount() > 1) {
+            JTable tabla1 = (JTable) evt.getSource();
+            String codigo = (String) tabla1.getModel().getValueAt(tabla1.getSelectedRow(), 0);
+            deptoSeleccionado = this.nomina.obtenerDepartmentoPorCodigo(codigo);
+            estaEnModoEdicion = true;
+            ponerModoEdicion();
         }
-        //</editor-fold>
-        //</editor-fold>
+    }//GEN-LAST:event_tblDepartamentoMouseClicked
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaDepartamento().setVisible(true);
-            }
-        });
-    }
+    private void btnCancelarEdicionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarEdicionMouseClicked
+        estaEnModoEdicion = false;
+        this.ponerModoEdicion();
+    }//GEN-LAST:event_btnCancelarEdicionMouseClicked
+
+    private void btnModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModificarMouseClicked
+        this.modificar();
+    }//GEN-LAST:event_btnModificarMouseClicked
+
+    private void btnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseClicked
+        this.eliminar();
+    }//GEN-LAST:event_btnEliminarMouseClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        this.limpiarComponentes();
+    }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnCancelarEdicion;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btoSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblCodigo;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JTable tblDepartamento;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
 }

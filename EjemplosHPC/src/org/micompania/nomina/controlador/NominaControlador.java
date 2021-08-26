@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.micompania.nomina.controlador;
 
 import java.util.ArrayList;
@@ -17,45 +12,79 @@ import org.micompania.nomina.modelo.Salario;
  * @author GTX1050
  */
 public class NominaControlador {
+
     private final List<Departamento> departamentos;
 
+    //Departamentos
     public List<Departamento> getDepartamentos() {
         return departamentos;
     }
-    
+
+    public void agregarDepartamento(Departamento d) {
+        departamentos.add(d);
+    }
+
+    public void actualizarDepartamento(Departamento depto, int indice) {
+        departamentos.set(indice, depto);
+    }
+
+    public void eliminarDepartamento(Departamento depto) {
+        if (departamentos.contains(depto)) {
+            departamentos.remove(depto);
+        }
+    }
+
+    public Departamento obtenerDepartmentoPorCodigo(String codigo) {
+        for (Departamento departamento : departamentos) {
+            if (departamento.getCodigo().equals(codigo)) {
+                return departamento;
+            }
+        }
+        return null;
+    }
+
+    //Empleados
+    public void agregarEmpleado(Empleado p) {
+        p.getDepartamento().getPersonas().add(p);
+    }
+
+    //Salarios
     private final List<Salario> salarios;
 
     public List<Salario> getSalarios() {
         return salarios;
     }
-    
-    
+
+    public Salario obtenerSalarioPorCodigo(String codigo) {
+        for (Salario sal : salarios) {
+            if (sal.getCodigo().equals(codigo)) {
+                return sal;
+            }
+        }
+        return null;
+    }
+
+    public void actualizarSalario(Salario salario, int indice) {
+        salarios.set(indice, salario);
+    }
+
+    public void eliminarSalario(Salario salario) {
+        if (salarios.contains(salario)) {
+            salarios.remove(salario);
+        }
+    }
 
     public NominaControlador() {
         departamentos = new ArrayList<>();
         salarios = new ArrayList<>();
     }
-    
-    
-    public void agregarEmpleado(Empleado p){
-        p.getDepartamento().getPersonas().add(p);
-    }
-    
-    public void agregarContratista(Contratista c){
+
+    public void agregarContratista(Contratista c) {
         c.getDepartamento().getPersonas().add(c);
     }
-    
-    public void agregarDepartamento(Departamento d){
-        departamentos.add(d);
-    }
-    
-    public void agregarSalario(Salario s){
+
+    public void agregarSalario(Salario s) {
         salarios.add(s);
     }
-    
-    public void guardarEmpleado(Empleado emp){
-        String sql = "INSERT INTO EMPLEADO VALUES (";
-        sql+=emp.getCodigoEmpleado()+",'"+emp.getPrimerNombre()+"',";
-        sql+=")";
-    }
+
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.micompania.nomina.modelo;
 
 /**
@@ -47,6 +42,11 @@ public class Salario {
 
     public void setBase(Double base) {
         this.base = base;
+    }
+
+    @Override
+    public String toString() {
+        return "Salario (" + "codigo=" + codigo + ", grado=" + grado + ", base=" + base + ')';
     }
     
     

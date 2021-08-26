@@ -15,14 +15,13 @@ public class Empleado extends Persona {
     private String codigoEmpleado;
     private String usuario;
     private String password;
-    private Long grado;
+    private Salario salario;
     
-
     public Empleado() {
     }
 
     public Empleado(String codigoEmpleado, String usuario, String password, 
-            Long grado, int tipoDocumento, String documentoIdentidad, 
+            Salario salario, int tipoDocumento, String documentoIdentidad, 
             String primerNombre, String segundoNombre, String apellido, 
             Date fechaNacimiento, char sexo, Departamento departamento) {
         super(tipoDocumento, documentoIdentidad, primerNombre, segundoNombre, 
@@ -30,7 +29,7 @@ public class Empleado extends Persona {
         this.codigoEmpleado = codigoEmpleado;
         this.usuario = usuario;
         this.password = password;
-        this.grado = grado;
+        this.salario = salario;
     }
     
     
@@ -59,17 +58,17 @@ public class Empleado extends Persona {
         this.password = password;
     }
 
-    public Long getGrado() {
-        return grado;
+    public Salario getSalario() {
+        return salario;
     }
 
-    public void setGrado(Long grado) {
-        this.grado = grado;
+    public void setSalario(Salario salario) {
+        this.salario = salario;
     }
-
+    
     @Override
     public String toString() {
-        return super.toString()+"Empleado{" + "codigoEmpleado=" + codigoEmpleado + ", usuario=" + usuario + ", password=" + password + ", grado=" + grado + '}';
+        return super.toString()+"Empleado{" + "codigoEmpleado=" + codigoEmpleado + ", usuario=" + usuario + ", password=" + password + ", salario=" + salario + '}';
     }
 
     

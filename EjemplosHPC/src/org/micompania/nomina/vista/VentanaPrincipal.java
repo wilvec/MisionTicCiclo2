@@ -15,6 +15,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private NominaControlador nominaActual;
     private VentanaDepartamento vDepto;
     private VentanaEmpleado vEmpleado;
+    private VentanaSalario vSalario;
     /**
      * Creates new form VentanaPrincipal
      */
@@ -27,7 +28,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         initComponents();
         vDepto = new VentanaDepartamento(nominaActual);
         vEmpleado = new VentanaEmpleado(nominaActual);
-        
+        vSalario= new VentanaSalario(nominaActual);
     }
     
     public NominaControlador getNominaActual() {
@@ -59,14 +60,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        btnDepartamento = new javax.swing.JButton();
+        btnEmpleado = new javax.swing.JButton();
+        btnContratista = new javax.swing.JButton();
+        btnSalario = new javax.swing.JButton();
+        btnListaNomina = new javax.swing.JButton();
+        btnAcerca = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
+        btnPagoContratista = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -74,191 +75,163 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(102, 153, 0));
         jLabel1.setText("Nomina Swing 1.0");
 
-        jButton1.setText("Agregar Departamento");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnDepartamento.setText("Agregar Departamento");
+        btnDepartamento.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                btnDepartamentoMouseClicked(evt);
             }
         });
 
-        jButton2.setText("Agregar Empleado");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnEmpleado.setText("Agregar Empleado");
+        btnEmpleado.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton2MouseClicked(evt);
+                btnEmpleadoMouseClicked(evt);
             }
         });
 
-        jButton3.setText("Agregar Contratista");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnContratista.setText("Agregar Contratista");
+        btnContratista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnContratistaActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Agregar Salario");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+        btnSalario.setText("Agregar Salario");
+        btnSalario.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSalarioMouseClicked(evt);
             }
         });
 
-        jButton5.setText("Actualizar Salario Contratista");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        btnListaNomina.setText("Listar Nomina Mes");
+        btnListaNomina.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                btnListaNominaActionPerformed(evt);
             }
         });
 
-        jButton6.setText("Listar Nomina Mes");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnAcerca.setText("Acerca de ...");
+        btnAcerca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnAcercaActionPerformed(evt);
             }
         });
 
-        jButton7.setText("Acerca de ...");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnSalirActionPerformed(evt);
             }
         });
 
-        jButton8.setText("Salir");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
-            }
-        });
+        btnPagoContratista.setText("Act.Pago Contratista");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(140, 140, 140)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(158, 158, 158)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2)
-                            .addComponent(jButton3)
-                            .addComponent(jButton4)
-                            .addComponent(jButton5)
-                            .addComponent(jButton6)
-                            .addComponent(jButton7)
-                            .addComponent(jButton8))))
-                .addContainerGap(139, Short.MAX_VALUE))
+                .addGap(85, 85, 85)
+                .addComponent(jLabel1)
+                .addContainerGap(84, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(btnDepartamento)
+                    .addComponent(btnEmpleado)
+                    .addComponent(btnContratista)
+                    .addComponent(btnPagoContratista, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSalario)
+                    .addComponent(btnListaNomina)
+                    .addComponent(btnAcerca)
+                    .addComponent(btnSalir))
+                .addGap(107, 107, 107))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2, jButton3, jButton4, jButton5, jButton6, jButton7, jButton8});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnAcerca, btnContratista, btnDepartamento, btnEmpleado, btnListaNomina, btnPagoContratista, btnSalario, btnSalir});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
+                .addGap(34, 34, 34)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(btnDepartamento)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(btnEmpleado)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                .addComponent(btnSalario)
+                .addGap(35, 35, 35)
+                .addComponent(btnContratista)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
+                .addComponent(btnPagoContratista)
+                .addGap(24, 24, 24)
+                .addComponent(btnListaNomina)
+                .addGap(30, 30, 30)
+                .addComponent(btnAcerca)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton6)
-                .addGap(54, 54, 54)
-                .addComponent(jButton7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton8)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addComponent(btnSalir)
+                .addContainerGap(47, Short.MAX_VALUE))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnAcerca, btnContratista, btnDepartamento, btnEmpleado, btnListaNomina, btnPagoContratista, btnSalario, btnSalir});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnContratistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContratistaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnContratistaActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnListaNominaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListaNominaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnListaNominaActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void btnAcercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcercaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_btnAcercaActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
-
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         this.dispose();
-    }//GEN-LAST:event_jButton8ActionPerformed
+    }//GEN-LAST:event_btnSalirActionPerformed
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void btnDepartamentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDepartamentoMouseClicked
         vDepto.setVisible(true);
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_btnDepartamentoMouseClicked
 
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+    private void btnEmpleadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEmpleadoMouseClicked
         vEmpleado.llenarListaDepartamentos();
+        vEmpleado.llenarSalarios();
         vEmpleado.setVisible(true);
-    }//GEN-LAST:event_jButton2MouseClicked
+    }//GEN-LAST:event_btnEmpleadoMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaPrincipal().setVisible(true);
-            }
-        });
-    }
+    private void btnSalarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSalarioMouseClicked
+        vSalario.setVisible(true);
+    }//GEN-LAST:event_btnSalarioMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
+    private javax.swing.JButton btnAcerca;
+    private javax.swing.JButton btnContratista;
+    private javax.swing.JButton btnDepartamento;
+    private javax.swing.JButton btnEmpleado;
+    private javax.swing.JButton btnListaNomina;
+    private javax.swing.JButton btnPagoContratista;
+    private javax.swing.JButton btnSalario;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the vSalario
+     */
+    public VentanaSalario getvSalario() {
+        return vSalario;
+    }
+
+    /**
+     * @param vSalario the vSalario to set
+     */
+    public void setvSalario(VentanaSalario vSalario) {
+        this.vSalario = vSalario;
+    }
 }

@@ -5,6 +5,8 @@
  */
 package org.micompania.nomina.controlador;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import org.micompania.nomina.vista.VentanaPrincipal;
 
 /**
@@ -15,6 +17,13 @@ public class Aplicacion {
     public static void main(String[] args){
         NominaControlador nominaApp = new NominaControlador();
         VentanaPrincipal vpal = new VentanaPrincipal(nominaApp);
+        
         vpal.setVisible(true);
+        vpal.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e) {
+                System.exit(0);
+            }
+        });
     }
 }

@@ -59,7 +59,7 @@ public class ModeloTablaEmpleado implements TableModel{
             case 1: return empleados.get(rowIndex).getPrimerNombre()+" "+
                     empleados.get(rowIndex).getSegundoNombre()+" "+
                     empleados.get(rowIndex).getApellido();
-            case 2: return empleados.get(rowIndex).getGrado();
+            case 2: return empleados.get(rowIndex).getSalario().getGrado();
             case 3: return empleados.get(rowIndex).getDepartamento().getNombre();
             default: return "";
         }

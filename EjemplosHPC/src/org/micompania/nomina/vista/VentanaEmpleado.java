@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.micompania.nomina.vista;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
@@ -13,6 +7,8 @@ import javax.swing.JOptionPane;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
+import org.micompania.nomina.modelo.Salario;
+import org.micompania.nomina.util.UtilidadesVista;
 
 /**
  *
@@ -20,26 +16,18 @@ import org.micompania.nomina.modelo.Empleado;
  */
 public class VentanaEmpleado extends javax.swing.JFrame {
 
-    /**
-     * @return the vMostrarEmpleados
-     */
     public VentanaMostrarEmpleado getvMostrarEmpleados() {
         return vMostrarEmpleados;
     }
 
-    /**
-     * @param vMostrarEmpleados the vMostrarEmpleados to set
-     */
     public void setvMostrarEmpleados(VentanaMostrarEmpleado vMostrarEmpleados) {
         this.vMostrarEmpleados = vMostrarEmpleados;
     }
 
     private NominaControlador nominaActual;
+
     private VentanaMostrarEmpleado vMostrarEmpleados;
 
-    /**
-     * Creates new form VentanaEmpleado
-     */
     public VentanaEmpleado() {
         initComponents();
     }
@@ -48,6 +36,14 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         this.nominaActual = nominaActual;
         initComponents();
 
+    }
+    
+    public void llenarSalarios(){
+        DefaultComboBoxModel  modeloListaSalario = new DefaultComboBoxModel();
+        for(Salario salario : this.nominaActual.getSalarios()){
+            modeloListaSalario.addElement(salario);
+        }
+        jboSalario.setModel(modeloListaSalario);
     }
 
     public void llenarListaDepartamentos() {
@@ -58,6 +54,16 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         jboDepartamento.setModel(modeloLista);
     }
 
+    private void limpiarComponentes(){
+        jboDepartamento.setSelectedIndex(0);
+        btoGrpTipoDocumento.clearSelection();
+        UtilidadesVista.limpiarComponenteTexto(txtApellido,txtCodigo,
+                txtFechaNacimiento,txtNombre,
+                txtNumeroDocumento,txtPassword, txtUsuario);
+        btoGrpSexo.clearSelection();
+        jboSalario.setSelectedIndex(0);
+    }
+    
     private Empleado obtenerEmpleadoDeVista() {
         int tipoDocumento = 0;
         if (optCC.isSelected()) {
@@ -87,11 +93,12 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         Departamento depto = (Departamento) jboDepartamento.getModel().getSelectedItem();
 
         String codigoEmpleado = txtCodigo.getText();
-        String usuario = txtUusuario.getText();
+        String usuario = txtUsuario.getText();
         String password = txtPassword.getText();
-        Long grado = ((Integer) (spnGrado.getValue())).longValue();
+        Salario salario = (Salario) jboSalario.getModel().getSelectedItem();
+        
         Empleado emp = new Empleado(codigoEmpleado, usuario,
-                password, grado, tipoDocumento, documentoIdentidad,
+                password, salario, tipoDocumento, documentoIdentidad,
                 primerNombre, "", apellido,
                 fechaNacimiento, sexo, depto);
         
@@ -115,36 +122,36 @@ public class VentanaEmpleado extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup2 = new javax.swing.ButtonGroup();
+        btoGrpSexo = new javax.swing.ButtonGroup();
+        btoGrpTipoDocumento = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblDepartamento = new javax.swing.JLabel();
         jboDepartamento = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblTipoDocumento = new javax.swing.JLabel();
+        lblNroDocumento = new javax.swing.JLabel();
         txtNumeroDocumento = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
+        lblNombre = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
+        lblApellido = new javax.swing.JLabel();
         txtApellido = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
+        lblFecNacimiento = new javax.swing.JLabel();
         txtFechaNacimiento = new javax.swing.JFormattedTextField();
-        jLabel8 = new javax.swing.JLabel();
+        lblSexo = new javax.swing.JLabel();
         optSexoF = new javax.swing.JRadioButton();
         optSexoM = new javax.swing.JRadioButton();
         optCC = new javax.swing.JRadioButton();
         optCE = new javax.swing.JRadioButton();
         optPas = new javax.swing.JRadioButton();
         jPanel1 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        lblCodigo = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
-        txtUusuario = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
+        lblUsuario = new javax.swing.JLabel();
+        txtUsuario = new javax.swing.JTextField();
+        lblPassword = new javax.swing.JLabel();
         txtPassword = new javax.swing.JPasswordField();
-        jLabel12 = new javax.swing.JLabel();
-        spnGrado = new javax.swing.JSpinner();
+        lblSalario = new javax.swing.JLabel();
+        jboSalario = new javax.swing.JComboBox<>();
         btnGuardar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
@@ -154,37 +161,37 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setText("EMPLEADOS");
 
-        jLabel2.setText("Departamento");
+        lblDepartamento.setText("Departamento");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos Persona"));
 
-        jLabel3.setText("Tipo de documento");
+        lblTipoDocumento.setText("Tipo de documento");
 
-        jLabel4.setText("Número documento");
+        lblNroDocumento.setText("Número documento");
 
-        jLabel5.setText("Nombre");
+        lblNombre.setText("Nombre");
 
-        jLabel6.setText("Apellido");
+        lblApellido.setText("Apellido");
 
-        jLabel7.setText("Fecha Nacimiento");
+        lblFecNacimiento.setText("Fecha Nacimiento");
 
         txtFechaNacimiento.setText("dd/MM/yyyy");
 
-        jLabel8.setText("Sexo");
+        lblSexo.setText("Sexo");
 
-        buttonGroup1.add(optSexoF);
+        btoGrpSexo.add(optSexoF);
         optSexoF.setText("Femenino");
 
-        buttonGroup1.add(optSexoM);
+        btoGrpSexo.add(optSexoM);
         optSexoM.setText("Masculino");
 
-        buttonGroup2.add(optCC);
+        btoGrpTipoDocumento.add(optCC);
         optCC.setText("CC");
 
-        buttonGroup2.add(optCE);
+        btoGrpTipoDocumento.add(optCE);
         optCE.setText("CE");
 
-        buttonGroup2.add(optPas);
+        btoGrpTipoDocumento.add(optPas);
         optPas.setText("PAS");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -194,22 +201,21 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel8))
+                    .addComponent(lblTipoDocumento)
+                    .addComponent(lblNroDocumento)
+                    .addComponent(lblNombre)
+                    .addComponent(lblFecNacimiento)
+                    .addComponent(lblSexo)
+                    .addComponent(lblApellido))
                 .addGap(26, 26, 26)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtApellido)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(optSexoF)
                         .addGap(18, 18, 18)
                         .addComponent(optSexoM))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtNumeroDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtNombre)
-                        .addComponent(txtApellido, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
+                    .addComponent(txtNumeroDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
                     .addComponent(txtFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(optCC)
@@ -224,29 +230,29 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(lblTipoDocumento)
                     .addComponent(optCC)
                     .addComponent(optCE)
                     .addComponent(optPas))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
+                    .addComponent(lblNroDocumento)
                     .addComponent(txtNumeroDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
+                    .addComponent(lblNombre)
                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
+                    .addComponent(lblApellido)
                     .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
+                    .addComponent(lblFecNacimiento)
                     .addComponent(txtFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
+                    .addComponent(lblSexo)
                     .addComponent(optSexoF)
                     .addComponent(optSexoM))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -254,13 +260,13 @@ public class VentanaEmpleado extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos Empleado"));
 
-        jLabel9.setText("Código");
+        lblCodigo.setText("Código");
 
-        jLabel10.setText("Usuario");
+        lblUsuario.setText("Usuario");
 
-        jLabel11.setText("Password");
+        lblPassword.setText("Password");
 
-        jLabel12.setText("Grado");
+        lblSalario.setText("Salario");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -269,42 +275,40 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel12))
+                    .addComponent(lblUsuario)
+                    .addComponent(lblCodigo)
+                    .addComponent(lblPassword)
+                    .addComponent(lblSalario))
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(spnGrado, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtUusuario)
-                            .addComponent(txtPassword))
-                        .addGap(72, 72, 72))))
+                        .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtUsuario)
+                    .addComponent(txtPassword)
+                    .addComponent(jboSalario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(72, 72, 72))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
+                    .addComponent(lblCodigo)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(txtUusuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblUsuario)
+                    .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
+                    .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(spnGrado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblSalario)
+                    .addComponent(jboSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         btnGuardar.setText("Guardar");
@@ -347,10 +351,12 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(40, 40, 40)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(29, 29, 29)
-                                .addComponent(jboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(22, 22, 22)
+                                .addComponent(lblDepartamento)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                                .addComponent(jboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(42, 42, 42))
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -362,18 +368,18 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(lblDepartamento)
                     .addComponent(jboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuardar)
                     .addComponent(btnSalir)
                     .addComponent(jButton1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -388,7 +394,7 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         nominaActual.agregarEmpleado(emp);
         JOptionPane.showMessageDialog(this, "Se agregó empleado a la nómina",
                 "Agregar Empleado", JOptionPane.INFORMATION_MESSAGE);
-        System.out.println(emp);
+        limpiarComponentes();
     }//GEN-LAST:event_btnGuardarMouseClicked
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
@@ -396,74 +402,39 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         vMostrarEmpleados.setVisible(true);
     }//GEN-LAST:event_jButton1MouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaEmpleado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaEmpleado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaEmpleado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaEmpleado.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaEmpleado().setVisible(true);
-            }
-        });
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnSalir;
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup btoGrpSexo;
+    private javax.swing.ButtonGroup btoGrpTipoDocumento;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JComboBox<String> jboDepartamento;
+    private javax.swing.JComboBox<String> jboSalario;
+    private javax.swing.JLabel lblApellido;
+    private javax.swing.JLabel lblCodigo;
+    private javax.swing.JLabel lblDepartamento;
+    private javax.swing.JLabel lblFecNacimiento;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblNroDocumento;
+    private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblSalario;
+    private javax.swing.JLabel lblSexo;
+    private javax.swing.JLabel lblTipoDocumento;
+    private javax.swing.JLabel lblUsuario;
     private javax.swing.JRadioButton optCC;
     private javax.swing.JRadioButton optCE;
     private javax.swing.JRadioButton optPas;
     private javax.swing.JRadioButton optSexoF;
     private javax.swing.JRadioButton optSexoM;
-    private javax.swing.JSpinner spnGrado;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JFormattedTextField txtFechaNacimiento;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtNumeroDocumento;
     private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtUusuario;
+    private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }
