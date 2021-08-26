@@ -19,6 +19,15 @@ public class NominaControlador {
     public List<Departamento> getDepartamentos() {
         return departamentos;
     }
+    
+    public Departamento obtenerDepartmentoPorCodigo(String codigo) {
+        for (Departamento departamento : departamentos) {
+            if (departamento.getCodigo().equals(codigo)) {
+                return departamento;
+            }
+        }
+        return null;
+    }
 
     public void agregarDepartamento(Departamento d) {
         departamentos.add(d);
@@ -32,20 +41,6 @@ public class NominaControlador {
         if (departamentos.contains(depto)) {
             departamentos.remove(depto);
         }
-    }
-
-    public Departamento obtenerDepartmentoPorCodigo(String codigo) {
-        for (Departamento departamento : departamentos) {
-            if (departamento.getCodigo().equals(codigo)) {
-                return departamento;
-            }
-        }
-        return null;
-    }
-
-    //Empleados
-    public void agregarEmpleado(Empleado p) {
-        p.getDepartamento().getPersonas().add(p);
     }
 
     //Salarios
@@ -72,6 +67,11 @@ public class NominaControlador {
         if (salarios.contains(salario)) {
             salarios.remove(salario);
         }
+    }
+    
+    //Empleados
+    public void agregarEmpleado(Empleado p) {
+        p.getDepartamento().getPersonas().add(p);
     }
 
     public NominaControlador() {

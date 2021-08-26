@@ -76,8 +76,8 @@ public class VentanaDepartamento extends javax.swing.JFrame {
 
     private void modificar() {
         int rm = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
-                "Modificar Departamento", JOptionPane.OK_CANCEL_OPTION);
-        if (rm == JOptionPane.OK_OPTION) {
+                "Modificar Departamento", JOptionPane.YES_NO_OPTION);
+        if (rm == JOptionPane.YES_OPTION) {
             int indice = this.nomina.getDepartamentos().indexOf(deptoSeleccionado);
             deptoSeleccionado.setCodigo(txtCodigo.getText());
             deptoSeleccionado.setNombre(txtNombre.getText());
@@ -94,8 +94,8 @@ public class VentanaDepartamento extends javax.swing.JFrame {
 
     private void eliminar() {
         int rm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el departamento seleccionado?",
-                "Eliminar Departamento", JOptionPane.OK_CANCEL_OPTION);
-        if (rm == JOptionPane.OK_OPTION) {
+                "Eliminar Departamento", JOptionPane.YES_NO_OPTION);
+        if (rm == JOptionPane.YES_OPTION) {
             this.nomina.eliminarDepartamento(deptoSeleccionado);
             estaEnModoEdicion = false;
             this.ponerModoEdicion();
@@ -157,7 +157,7 @@ public class VentanaDepartamento extends javax.swing.JFrame {
         });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel1.setText("AGREGAR DEPARTAMENTO");
+        jLabel1.setText("DEPARTAMENTO");
 
         lblCodigo.setText("Código");
 
@@ -211,10 +211,6 @@ public class VentanaDepartamento extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(164, 164, 164))
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,6 +236,10 @@ public class VentanaDepartamento extends javax.swing.JFrame {
                             .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(47, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(211, 211, 211))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

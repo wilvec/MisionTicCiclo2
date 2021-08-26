@@ -64,12 +64,12 @@ public class ModeloTablaDepto extends AbstractTableModel {
 
     @Override
     public void addTableModelListener(TableModelListener l) {
-        System.out.println("addTableModelListener");
+        //System.out.println("addTableModelListener");
     }
 
     @Override
     public void removeTableModelListener(TableModelListener l) {
-        System.out.println("removeTableModelListener");
+       // System.out.println("removeTableModelListener");
     }
 
     /**

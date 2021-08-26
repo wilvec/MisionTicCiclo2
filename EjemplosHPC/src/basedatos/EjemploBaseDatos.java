@@ -29,10 +29,12 @@ public class EjemploBaseDatos {
             if (conn != null) {
                 System.out.println("Conectado");
             }
-
-            /// INSERCION
+            /*----------------------- OPERACIONES CRUD -----------------------------------
+            /*----------------------------------------------------------------------------
+             */
+ /*/// INSERT - (C)
             String sql = "INSERT INTO libro (libId , libNombre ,libPub ,ediId ,autId , libPrecio ) "
-                    + "VALUES (?,?,?,?,?,?)";
+            + "VALUES (?,?,?,?,?,?)";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, 1010);
             statement.setString(2, "La Hojarasca");
@@ -42,7 +44,61 @@ public class EjemploBaseDatos {
             statement.setDouble(6, 95000.0);
             int rowsInserted = statement.executeUpdate();
             if (rowsInserted > 0) {
-                System.out.println(" Inserción exitosa !");
+            System.out.println(" Inserción exitosa !");
+            }
+            
+            //SELECT (R)
+            String sql = " SELECT * FROM libro WHERE libId = 10111103";
+            Statement statement = conn.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+            //int count = 0;
+            List<String> resultadosString = new ArrayList<>();
+            while (result.next()) {
+                int libId = result.getInt(1);
+                String libNombre = result.getString(2);
+                int libPub = result.getInt(3);
+                int ediId = result.getInt(4);
+                int autId = result.getInt(5);
+                double libPrecio = result.getDouble(6);
+                
+                //int libId = result.getInt("libId");
+                //String libNombre = result.getString("libNombre");
+                //int libPub = result.getInt("libPub");
+                //int ediId = result.getInt("ediId");
+                //int autId = result.getInt("autId");
+                //double libPrecio = result.getDouble("libPrecio");
+                
+                String registro = libId+"|"+libNombre+"|"+libPub+"|"+ediId+"|"+autId+"|"+libPrecio;
+                resultadosString.add(registro);
+            }
+            
+            for (String string : resultadosString) {
+                System.out.println(string);
+            }
+             */
+            // UPDATE - (U)
+            /*
+            String sql = " UPDATE libro SET libNombre =?,"
+                    + "libPub =?, libPrecio =? WHERE libId =?";
+            
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, "Crónica de una muerte anunciada ");
+            statement.setInt(2, 1981);
+            statement.setDouble(3, 100000.0);
+            statement.setInt(4, 1010);
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("El registro fue "
+                        + " actualizado exitosamente !");
+            }
+             */
+            // DELETE (D)
+            String sql = " DELETE FROM libro WHERE libId =?";
+            PreparedStatement statement  = conn.prepareStatement(sql);
+            statement.setInt(1, 1010);
+            int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println(" Borrado exitoso !");
             }
 
         } catch (SQLException ex) {
