@@ -42,10 +42,13 @@ SELECT ob_nombre , ex_nombre FROM obra JOIN exposicion ON obra.ob_ex_id = exposi
 
 -- ---- PROBLEMAS
 -- 1. Nombre de las obras que tienen un costo menor a 1/3 del promedio.
+
+
+
 select ob_nombre FROM obra WHERE ob_costo < ((SELECT AVG(ob_costo) FROM obra) / 3);
 -- SELECT AVG(ob_costo) / 3 FROM obra;
 -- 2. Listar los nombres de las obras ordenadas alfabéticamente
-SELECT ob_nombre FROM obra ORDER BY ob_nombre ;
+SELECT ob_nombre FROM obra ORDER BY ob_nombre desc ;
 -- 3. Sumar el costo de las obras por tipo de obra
 SELECT ob_tipo, SUM(ob_costo) FROM obra GROUP BY ob_tipo;
 -- 4. Contar las obras que tiene cada una de las exposiciones
@@ -54,9 +57,18 @@ SELECT count(ob_id),  ob_ex_id FROM obra GROUP BY ob_ex_id;
 SELECT * FROM exposicion;
 -- 1003
 SELECT ob_nombre, ob_tipo, ob_costo from obra where ob_ex_id = 1003;
+-- 5. Con join
+SELECT ob_nombre, ob_tipo, ob_costo from obra  join exposicion on ob_ex_id = ex_id where ex_nombre='Da Vinci';
+
 
 -- 6. Proyectar nombre del museo, nombre de la obra de las presentaciones de las obras de \Da Vinci"
-SELECT  museo.mu_nombre as "Nombre del museo", obra.ob_nombre as "Nombre de la obra" FROM obra join presentacion on obra.ob_id = presentacion.pre_ob_id join museo on museo.mu_id = presentacion.pre_mu_id;
+SELECT  museo.mu_nombre as "Nombre del museo", obra.ob_nombre as "Nombre de la obra" FROM obra join presentacion on 
+obra.ob_id = presentacion.pre_ob_id join museo on museo.mu_id = presentacion.pre_mu_id join exposicion on ob_ex_id = ex_id 
+where ex_nombre='Da Vinci';
+
+
+
+
 
 
 
