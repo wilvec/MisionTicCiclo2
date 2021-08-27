@@ -13,7 +13,7 @@ public class ModeloTablaDepto extends AbstractTableModel {
 
     private List<Departamento> deptos;
 
-    private final String[] columnasTabla = new String[]{"Código", "Departamento"};
+    private final String[] columnasTabla = new String[]{"Código", "Nombre Departamento"};
     private final Class<?>[] clasesColumnas = new Class<?>[]{String.class,
         String.class};
 

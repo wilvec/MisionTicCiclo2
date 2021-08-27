@@ -2,49 +2,56 @@ package org.micompania.nomina.controlador;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.micompania.nomina.dao.DepartamentoDAOJdbcImpl;
+import org.micompania.nomina.dao.IDepartamentoDAO;
 import org.micompania.nomina.modelo.Contratista;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
 import org.micompania.nomina.modelo.Salario;
 
 /**
- *
+ * Clase que hace de Controlador o mediador entre los elementos 
+ * del modelo y la vista.
  * @author GTX1050
  */
 public class NominaControlador {
 
     private final List<Departamento> departamentos;
+    private final List<Salario> salarios;
+    
+    private final IDepartamentoDAO dao;
+    
+    public NominaControlador() {
+        departamentos = new ArrayList<>();
+        salarios = new ArrayList<>();
+        //dao = new DepartamentoDAOMemoriaImpl(departamentos);
+        dao = new DepartamentoDAOJdbcImpl(departamentos);
+    }
 
     //Departamentos
     public List<Departamento> getDepartamentos() {
-        return departamentos;
+       
+       return dao.getDepartamentos();
     }
     
     public Departamento obtenerDepartmentoPorCodigo(String codigo) {
-        for (Departamento departamento : departamentos) {
-            if (departamento.getCodigo().equals(codigo)) {
-                return departamento;
-            }
-        }
-        return null;
+        return dao.obtenerDepartmentoPorCodigo(codigo);
     }
 
-    public void agregarDepartamento(Departamento d) {
-        departamentos.add(d);
+    public void agregarDepartamento(Departamento depto) {
+       dao.agregarDepartamento(depto);
     }
 
     public void actualizarDepartamento(Departamento depto, int indice) {
-        departamentos.set(indice, depto);
+        dao.actualizarDepartamento(depto, indice);
     }
 
     public void eliminarDepartamento(Departamento depto) {
-        if (departamentos.contains(depto)) {
-            departamentos.remove(depto);
-        }
+        dao.eliminarDepartamento(depto);
     }
 
     //Salarios
-    private final List<Salario> salarios;
+    
 
     public List<Salario> getSalarios() {
         return salarios;
@@ -72,11 +79,6 @@ public class NominaControlador {
     //Empleados
     public void agregarEmpleado(Empleado p) {
         p.getDepartamento().getPersonas().add(p);
-    }
-
-    public NominaControlador() {
-        departamentos = new ArrayList<>();
-        salarios = new ArrayList<>();
     }
 
     public void agregarContratista(Contratista c) {

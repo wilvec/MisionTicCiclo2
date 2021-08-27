@@ -8,7 +8,11 @@ package basedatos;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +36,10 @@ public class EjemploBaseDatos {
             /*----------------------- OPERACIONES CRUD -----------------------------------
             /*----------------------------------------------------------------------------
              */
- /*/// INSERT - (C)
+            
+            
+ /// INSERT - (C)
+ /*
             String sql = "INSERT INTO libro (libId , libNombre ,libPub ,ediId ,autId , libPrecio ) "
             + "VALUES (?,?,?,?,?,?)";
             PreparedStatement statement = conn.prepareStatement(sql);
@@ -44,29 +51,34 @@ public class EjemploBaseDatos {
             statement.setDouble(6, 95000.0);
             int rowsInserted = statement.executeUpdate();
             if (rowsInserted > 0) {
-            System.out.println(" Inserción exitosa !");
+                System.out.println(" Inserción exitosa !");
             }
             
             //SELECT (R)
-            String sql = " SELECT * FROM libro WHERE libId = 10111103";
-            Statement statement = conn.createStatement();
-            ResultSet result = statement.executeQuery(sql);
+            //String sql = " SELECT * FROM libro ";
+            String sqlp = " SELECT * FROM libro WHERE libId = ?";
+            //Statement statement = conn.createStatement();
+            //ResultSet result = statement.executeQuery(sql);
+            PreparedStatement statement2 = conn.prepareStatement(sqlp);
+            statement2.setInt(1, 1002);
+            ResultSet result = statement2.executeQuery();
             //int count = 0;
             List<String> resultadosString = new ArrayList<>();
             while (result.next()) {
-                int libId = result.getInt(1);
-                String libNombre = result.getString(2);
-                int libPub = result.getInt(3);
-                int ediId = result.getInt(4);
-                int autId = result.getInt(5);
-                double libPrecio = result.getDouble(6);
+                          
+               // int libId = result.getInt(1);
+               // String libNombre = result.getString(2);
+               // int libPub = result.getInt(3);
+               // int ediId = result.getInt(4);
+               // int autId = result.getInt(5);
+               // double libPrecio = result.getDouble(6);
                 
-                //int libId = result.getInt("libId");
-                //String libNombre = result.getString("libNombre");
-                //int libPub = result.getInt("libPub");
-                //int ediId = result.getInt("ediId");
-                //int autId = result.getInt("autId");
-                //double libPrecio = result.getDouble("libPrecio");
+                int libId = result.getInt("libId");
+                String libNombre = result.getString("libNombre");
+                int libPub = result.getInt("libPub");
+                int ediId = result.getInt("ediId");
+                int autId = result.getInt("autId");
+                double libPrecio = result.getDouble("libPrecio");
                 
                 String registro = libId+"|"+libNombre+"|"+libPub+"|"+ediId+"|"+autId+"|"+libPrecio;
                 resultadosString.add(registro);
@@ -75,9 +87,9 @@ public class EjemploBaseDatos {
             for (String string : resultadosString) {
                 System.out.println(string);
             }
-             */
+            
             // UPDATE - (U)
-            /*
+            
             String sql = " UPDATE libro SET libNombre =?,"
                     + "libPub =?, libPrecio =? WHERE libId =?";
             
@@ -101,6 +113,7 @@ public class EjemploBaseDatos {
                 System.out.println(" Borrado exitoso !");
             }
 
+            
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {

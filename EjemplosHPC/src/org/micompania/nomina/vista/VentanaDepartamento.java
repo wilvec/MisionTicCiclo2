@@ -75,9 +75,9 @@ public class VentanaDepartamento extends javax.swing.JFrame {
     }
 
     private void modificar() {
-        int rm = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
+        int respuestaMensaje = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
                 "Modificar Departamento", JOptionPane.YES_NO_OPTION);
-        if (rm == JOptionPane.YES_OPTION) {
+        if (respuestaMensaje == JOptionPane.YES_OPTION) {
             int indice = this.nomina.getDepartamentos().indexOf(deptoSeleccionado);
             deptoSeleccionado.setCodigo(txtCodigo.getText());
             deptoSeleccionado.setNombre(txtNombre.getText());
@@ -89,13 +89,18 @@ public class VentanaDepartamento extends javax.swing.JFrame {
             this.tblDepartamento.revalidate();
             JOptionPane.showMessageDialog(this, "Se modificó la información",
                     "Modificar Departamento", JOptionPane.INFORMATION_MESSAGE);
+        } else if (respuestaMensaje == JOptionPane.NO_OPTION) {
+            estaEnModoEdicion = false;
+            this.ponerModoEdicion();
+            this.limpiarComponentes();
+            this.cargarDatosTabla();
         }
     }
 
     private void eliminar() {
-        int rm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el departamento seleccionado?",
+        int respuestaMensaje = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el departamento seleccionado?",
                 "Eliminar Departamento", JOptionPane.YES_NO_OPTION);
-        if (rm == JOptionPane.YES_OPTION) {
+        if (respuestaMensaje == JOptionPane.YES_OPTION) {
             this.nomina.eliminarDepartamento(deptoSeleccionado);
             estaEnModoEdicion = false;
             this.ponerModoEdicion();
@@ -103,6 +108,11 @@ public class VentanaDepartamento extends javax.swing.JFrame {
             this.cargarDatosTabla();
             JOptionPane.showMessageDialog(this, "Se eliminó la información",
                     "Eliminar Departamento", JOptionPane.INFORMATION_MESSAGE);
+        } else if (respuestaMensaje == JOptionPane.NO_OPTION) {
+            estaEnModoEdicion = false;
+            this.ponerModoEdicion();
+            this.limpiarComponentes();
+            this.cargarDatosTabla();
         }
     }
 
