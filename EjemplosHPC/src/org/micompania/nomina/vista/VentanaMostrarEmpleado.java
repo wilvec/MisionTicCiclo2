@@ -7,10 +7,14 @@ package org.micompania.nomina.vista;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
 import org.micompania.nomina.modelo.Persona;
+import org.micompania.nomina.util.NominaException;
+import org.micompania.nomina.util.UtilidadesVista;
 import org.micompania.nomina.vista.modelos.ModeloTablaEmpleado;
 
 /**
@@ -28,15 +32,20 @@ public class VentanaMostrarEmpleado extends javax.swing.JFrame {
     }
     
     private List<Empleado> obtenerTodosLosEmpleados(){
-        List<Empleado> todos = new ArrayList<>();
-        for(Departamento depto : nomina.getDepartamentos()){
-            for(Persona p : depto.getPersonas()){
-                if(p instanceof Empleado){
-                    todos.add((Empleado) p);
+        try {
+            List<Empleado> todos = new ArrayList<>();
+            for(Departamento depto : nomina.obtenerTodosLosDepartamentos()){
+                for(Persona p : depto.getPersonas()){
+                    if(p instanceof Empleado){
+                        todos.add((Empleado) p);
+                    }
                 }
             }
+            return todos;
+        } catch (NominaException ex) {
+            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+            return null;
         }
-        return todos;
     }
 
     public VentanaMostrarEmpleado(NominaControlador nomina) {

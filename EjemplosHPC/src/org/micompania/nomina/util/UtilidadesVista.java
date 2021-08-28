@@ -5,6 +5,9 @@
  */
 package org.micompania.nomina.util;
 
+import java.awt.Component;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -21,5 +24,15 @@ public class UtilidadesVista {
         for (JTextComponent texto : textos) {
             texto.setText("");
         }
+    }
+    
+    public static void mostrarMensajeInfo(Component comp, String mensaje){
+        JFrame ventana = (JFrame) comp;
+        JOptionPane.showMessageDialog(comp, mensaje, ventana.getTitle(), JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public static void mostrarMensajeError(Component comp, String mensaje){
+        JFrame ventana = (JFrame) comp;
+        JOptionPane.showMessageDialog(comp, mensaje, ventana.getTitle(), JOptionPane.INFORMATION_MESSAGE);
     }
 }

@@ -2,12 +2,15 @@ package org.micompania.nomina.vista;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
 import org.micompania.nomina.modelo.Salario;
+import org.micompania.nomina.util.NominaException;
 import org.micompania.nomina.util.UtilidadesVista;
 
 /**
@@ -47,11 +50,15 @@ public class VentanaEmpleado extends javax.swing.JFrame {
     }
 
     public void llenarListaDepartamentos() {
-        DefaultComboBoxModel modeloLista = new DefaultComboBoxModel();
-        for (Departamento depto : this.nominaActual.getDepartamentos()) {
-            modeloLista.addElement(depto);
+        try {
+            DefaultComboBoxModel modeloLista = new DefaultComboBoxModel();
+            for (Departamento depto : this.nominaActual.obtenerTodosLosDepartamentos()) {
+                modeloLista.addElement(depto);
+            }
+            jboDepartamento.setModel(modeloLista);
+        } catch (NominaException ex) {
+            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
         }
-        jboDepartamento.setModel(modeloLista);
     }
 
     private void limpiarComponentes(){
@@ -157,6 +164,7 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Empleados");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setText("EMPLEADOS");

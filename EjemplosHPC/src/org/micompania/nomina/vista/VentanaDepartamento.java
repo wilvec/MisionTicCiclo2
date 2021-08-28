@@ -1,9 +1,12 @@
 package org.micompania.nomina.vista;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
+import org.micompania.nomina.util.NominaException;
 import org.micompania.nomina.util.UtilidadesVista;
 import org.micompania.nomina.vista.modelos.ModeloTablaDepto;
 
@@ -15,6 +18,7 @@ public class VentanaDepartamento extends javax.swing.JFrame {
 
     private NominaControlador nomina;
     private Departamento deptoSeleccionado;
+    private String codigoAnterior;
     private boolean estaEnModoEdicion;
 
     public VentanaDepartamento() {
@@ -37,9 +41,15 @@ public class VentanaDepartamento extends javax.swing.JFrame {
     }
 
     private void cargarDatosTabla() {
-        ModeloTablaDepto model = new ModeloTablaDepto(nomina.getDepartamentos());
-        tblDepartamento.setModel(model);
-        tblDepartamento.revalidate();
+        ModeloTablaDepto model;
+        try {
+            model = new ModeloTablaDepto(nomina.obtenerTodosLosDepartamentos());
+            tblDepartamento.setModel(model);
+            tblDepartamento.revalidate();
+        } catch (NominaException ex) {
+            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+        }
+
     }
 
     private void limpiarComponentes() {
@@ -67,28 +77,33 @@ public class VentanaDepartamento extends javax.swing.JFrame {
         Departamento depto = new Departamento();
         depto.setCodigo(codigo);
         depto.setNombre(nombre);
-        this.nomina.agregarDepartamento(depto);
-        JOptionPane.showMessageDialog(this, "Se agregó correctamente el departamento",
-                "Agregar Departamento", JOptionPane.INFORMATION_MESSAGE);
-        UtilidadesVista.limpiarComponenteTexto(txtCodigo, txtNombre);
-        this.cargarDatosTabla();
+        try {
+            this.nomina.agregarDepartamento(depto);
+            UtilidadesVista.limpiarComponenteTexto(txtCodigo, txtNombre);
+            this.cargarDatosTabla();
+            UtilidadesVista.mostrarMensajeInfo(this, "Se agregó el departamento correctamente");
+        } catch (NominaException ex) {
+            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+        }
+
     }
 
     private void modificar() {
         int respuestaMensaje = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
                 "Modificar Departamento", JOptionPane.YES_NO_OPTION);
         if (respuestaMensaje == JOptionPane.YES_OPTION) {
-            int indice = this.nomina.getDepartamentos().indexOf(deptoSeleccionado);
             deptoSeleccionado.setCodigo(txtCodigo.getText());
             deptoSeleccionado.setNombre(txtNombre.getText());
-            this.nomina.actualizarDepartamento(deptoSeleccionado, indice);
-            estaEnModoEdicion = false;
-            this.ponerModoEdicion();
-            this.limpiarComponentes();
-            this.cargarDatosTabla();
-            this.tblDepartamento.revalidate();
-            JOptionPane.showMessageDialog(this, "Se modificó la información",
-                    "Modificar Departamento", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                this.nomina.actualizarDepartamento(deptoSeleccionado, this.codigoAnterior);
+                estaEnModoEdicion = false;
+                this.ponerModoEdicion();
+                this.limpiarComponentes();
+                this.cargarDatosTabla();
+                UtilidadesVista.mostrarMensajeInfo(this, "Se modificó la información correctamente");
+            } catch (NominaException ex) {
+                UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+            }
         } else if (respuestaMensaje == JOptionPane.NO_OPTION) {
             estaEnModoEdicion = false;
             this.ponerModoEdicion();
@@ -101,13 +116,16 @@ public class VentanaDepartamento extends javax.swing.JFrame {
         int respuestaMensaje = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el departamento seleccionado?",
                 "Eliminar Departamento", JOptionPane.YES_NO_OPTION);
         if (respuestaMensaje == JOptionPane.YES_OPTION) {
-            this.nomina.eliminarDepartamento(deptoSeleccionado);
-            estaEnModoEdicion = false;
+            try {
+                this.nomina.eliminarDepartamento(deptoSeleccionado);
+                estaEnModoEdicion = false;
             this.ponerModoEdicion();
             this.limpiarComponentes();
             this.cargarDatosTabla();
-            JOptionPane.showMessageDialog(this, "Se eliminó la información",
-                    "Eliminar Departamento", JOptionPane.INFORMATION_MESSAGE);
+            } catch (NominaException ex) {
+                UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+            }
+            
         } else if (respuestaMensaje == JOptionPane.NO_OPTION) {
             estaEnModoEdicion = false;
             this.ponerModoEdicion();
@@ -160,6 +178,7 @@ public class VentanaDepartamento extends javax.swing.JFrame {
         btnCancelarEdicion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Departamentos");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -292,11 +311,15 @@ public class VentanaDepartamento extends javax.swing.JFrame {
 
     private void tblDepartamentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDepartamentoMouseClicked
         if (evt.getClickCount() > 1) {
-            JTable tabla1 = (JTable) evt.getSource();
-            String codigo = (String) tabla1.getModel().getValueAt(tabla1.getSelectedRow(), 0);
-            deptoSeleccionado = this.nomina.obtenerDepartmentoPorCodigo(codigo);
-            estaEnModoEdicion = true;
-            ponerModoEdicion();
+            try {
+                JTable tabla1 = (JTable) evt.getSource();
+                this.codigoAnterior = (String) tabla1.getModel().getValueAt(tabla1.getSelectedRow(), 0);
+                deptoSeleccionado = this.nomina.obtenerDepartmentoPorCodigo(this.codigoAnterior);
+                estaEnModoEdicion = true;
+                ponerModoEdicion();
+            } catch (NominaException ex) {
+                UtilidadesVista.mostrarMensajeError(this, "No se pudo seleccionado el departamento: "+ex.getMessage());
+            }
         }
     }//GEN-LAST:event_tblDepartamentoMouseClicked
 
@@ -332,5 +355,19 @@ public class VentanaDepartamento extends javax.swing.JFrame {
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the codigoAnterior
+     */
+    public String getCodigoAnterior() {
+        return codigoAnterior;
+    }
+
+    /**
+     * @param codigoAnterior the codigoAnterior to set
+     */
+    public void setCodigoAnterior(String codigoAnterior) {
+        this.codigoAnterior = codigoAnterior;
+    }
 
 }

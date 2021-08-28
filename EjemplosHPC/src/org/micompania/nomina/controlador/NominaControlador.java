@@ -8,19 +8,33 @@ import org.micompania.nomina.modelo.Contratista;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
 import org.micompania.nomina.modelo.Salario;
+import org.micompania.nomina.util.NominaException;
 
 /**
- * Clase que hace de Controlador o mediador entre los elementos 
- * del modelo y la vista.
+ * Clase que hace de Controlador o mediador entre los elementos del modelo y la
+ * vista.
+ *
  * @author GTX1050
  */
 public class NominaControlador {
 
+    /**
+     * Lista de departamentos de la nómina
+     */
     private final List<Departamento> departamentos;
+    /**
+     * Lista de salarios
+     */
     private final List<Salario> salarios;
-    
+
+    /**
+     * Objeto DAO para la gestión de base de datos
+     */
     private final IDepartamentoDAO dao;
-    
+
+    /**
+     * Crea un objeto Controlador de Nómina
+     */
     public NominaControlador() {
         departamentos = new ArrayList<>();
         salarios = new ArrayList<>();
@@ -28,35 +42,70 @@ public class NominaControlador {
         dao = new DepartamentoDAOJdbcImpl(departamentos);
     }
 
-    //Departamentos
-    public List<Departamento> getDepartamentos() {
-       
-       return dao.getDepartamentos();
-    }
+    //----------- Departamentos--------------- 
     
-    public Departamento obtenerDepartmentoPorCodigo(String codigo) {
+    /**
+     * Devuelve una lista con todos los departamentos de la nómina
+     * @return la lista de Departamentos
+     */
+    public List<Departamento> obtenerTodosLosDepartamentos() throws NominaException {
+        return dao.obtenerTodosLosDepartamentos();
+    }
+
+    /**
+     * Obtiene un departamento de la nómina a partir de su código
+     * @param codigo el código del departamento a buscar
+     * @return El departamento asociado al código de búsqueda
+     *         o null si no se encontró nada
+     * @throws org.micompania.nomina.util.NominaException
+     */
+    public Departamento obtenerDepartmentoPorCodigo(String codigo) throws NominaException {
         return dao.obtenerDepartmentoPorCodigo(codigo);
     }
 
-    public void agregarDepartamento(Departamento depto) {
-       dao.agregarDepartamento(depto);
+    /**
+     * Agregar un departamento a la nómina.
+     * @param depto el departamento a agregar
+     * @throws org.micompania.nomina.util.NominaException
+     */
+    public void agregarDepartamento(Departamento depto) throws NominaException {
+        dao.agregarDepartamento(depto);
     }
 
-    public void actualizarDepartamento(Departamento depto, int indice) {
-        dao.actualizarDepartamento(depto, indice);
+    /**
+     * Actualiza los datos de un departamento a partir de su código.
+     * @param depto el departamento con los datos actualizadados
+     * @param codDeptoAnterior el código anterior del departamento
+     * @throws org.micompania.nomina.util.NominaException
+     */
+    public void actualizarDepartamento(Departamento depto, String codDeptoAnterior) throws NominaException {
+        dao.actualizarDepartamento(depto, codDeptoAnterior);
     }
 
-    public void eliminarDepartamento(Departamento depto) {
+    /**
+     * Quita un departamento de la nómina
+     * @param depto el departamento a eliminar
+     * @throws org.micompania.nomina.util.NominaException
+     */
+    public void eliminarDepartamento(Departamento depto) throws NominaException {
         dao.eliminarDepartamento(depto);
     }
 
-    //Salarios
+    //----------- Salarios ------------------- 
     
-
+    /**
+     * Devuelve la lista de salarios de la nómina
+     * @return la lista de los salarios
+     */
     public List<Salario> getSalarios() {
         return salarios;
     }
 
+    /**
+     * Obtiene un objeto salario a partir de un código dado
+     * @param codigo el código del salario a buscar
+     * @return El Objeto Salario recuperado o null si no se encontró
+     */
     public Salario obtenerSalarioPorCodigo(String codigo) {
         for (Salario sal : salarios) {
             if (sal.getCodigo().equals(codigo)) {
@@ -66,16 +115,31 @@ public class NominaControlador {
         return null;
     }
 
-    public void actualizarSalario(Salario salario, int indice) {
+    /**
+     * Actualiza los datos de un salario a partir de un código dado
+     * @param salario el objeto a actualizar
+     * @param codigoAnterior el código anterior del salario. 
+     */
+    public void actualizarSalario(Salario salario, String codigoAnterior) {
+        int indice = 0;
+        for (Salario sal : salarios) {
+            if (sal.getCodigo().equals(codigoAnterior)) {
+                indice = salarios.indexOf(sal);
+            }
+        }
         salarios.set(indice, salario);
     }
 
+    /**
+     * Quita un salario de la nómina
+     * @param salario el objeto a eliminar
+     */
     public void eliminarSalario(Salario salario) {
         if (salarios.contains(salario)) {
             salarios.remove(salario);
         }
     }
-    
+
     //Empleados
     public void agregarEmpleado(Empleado p) {
         p.getDepartamento().getPersonas().add(p);

@@ -16,6 +16,7 @@ public class VentanaSalario extends javax.swing.JFrame {
 
     private NominaControlador nomina;
     private Salario salarioSeleccionado;
+    private String codigoAnterior;
     private boolean estaEnModoEdicion;
 
     public VentanaSalario(NominaControlador nominaControlador) {
@@ -148,7 +149,7 @@ public class VentanaSalario extends javax.swing.JFrame {
                         .addComponent(jLabel1)))
                 .addGap(110, 110, 110))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(150, 150, 150)
+                .addGap(181, 181, 181)
                 .addComponent(btnCerrar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -178,9 +179,9 @@ public class VentanaSalario extends javax.swing.JFrame {
                     .addComponent(btnCancelarEdicion))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCerrar)
-                .addContainerGap())
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -189,15 +190,14 @@ public class VentanaSalario extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -231,8 +231,8 @@ public class VentanaSalario extends javax.swing.JFrame {
     private void tblSalariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSalariosMouseClicked
         if(evt.getClickCount()> 1){
             JTable tabla1 = (JTable) evt.getSource();
-            String codigo = (String) tabla1.getModel().getValueAt(tabla1.getSelectedRow(), 0);
-            salarioSeleccionado = this.nomina.obtenerSalarioPorCodigo(codigo);
+            this.codigoAnterior = (String) tabla1.getModel().getValueAt(tabla1.getSelectedRow(), 0);
+            salarioSeleccionado = this.nomina.obtenerSalarioPorCodigo(this.codigoAnterior);
             estaEnModoEdicion = true;
             ponerModoEdicion();
         }
@@ -282,8 +282,7 @@ public class VentanaSalario extends javax.swing.JFrame {
         int rm = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
                 "Modificar Salario", JOptionPane.OK_CANCEL_OPTION);
         if (rm == JOptionPane.OK_OPTION) {
-            int indice = this.nomina.getSalarios().indexOf(salarioSeleccionado);
-            this.nomina.actualizarSalario(salarioSeleccionado, indice);
+            this.nomina.actualizarSalario(salarioSeleccionado, this.codigoAnterior);
             estaEnModoEdicion = false;
             this.ponerModoEdicion();
             this.limpiarComponentes();
@@ -352,6 +351,20 @@ public class VentanaSalario extends javax.swing.JFrame {
 
     public void setEstaEnModoEdicion(boolean estaEnModoEdicion) {
         this.estaEnModoEdicion = estaEnModoEdicion;
+    }
+
+    /**
+     * @return the codigoAnterior
+     */
+    public String getCodigoAnterior() {
+        return codigoAnterior;
+    }
+
+    /**
+     * @param codigoAnterior the codigoAnterior to set
+     */
+    public void setCodigoAnterior(String codigoAnterior) {
+        this.codigoAnterior = codigoAnterior;
     }
 
 }
