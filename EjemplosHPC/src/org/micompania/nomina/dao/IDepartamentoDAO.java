@@ -33,7 +33,7 @@ public interface IDepartamentoDAO {
     public void agregarDepartamento(Departamento depto) throws NominaException;
     /**
      * Actualiza los datos de un departamento a partir de su código.
-     * @param depto el departamento con los datos actualizadados
+     * @param depto el departamento con los datos actualizados
      * @param codDeptoAnterior el código anterior del departamento
      * @throws NominaException lanza esta excepción si no pudo realizar la actualización del elemento
      */

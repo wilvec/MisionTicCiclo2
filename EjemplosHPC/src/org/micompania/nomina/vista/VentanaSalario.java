@@ -6,7 +6,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Salario;
-import org.micompania.nomina.util.UtilidadesVista;
+import org.micompania.nomina.util.NominaException;
+import org.micompania.nomina.util.Utilidades;
 import org.micompania.nomina.vista.modelos.ModeloTablaSalario;
 
 /**
@@ -22,6 +23,9 @@ public class VentanaSalario extends javax.swing.JFrame {
     public VentanaSalario(NominaControlador nominaControlador) {
         this.nomina = nominaControlador;
         initComponents();
+        estaEnModoEdicion = true;
+        this.ponerModoEdicion();
+        this.cargarDatosTabla();
     }
 
     public VentanaSalario() {
@@ -29,6 +33,9 @@ public class VentanaSalario extends javax.swing.JFrame {
         NumberFormat nf = NumberFormat.getCurrencyInstance();
         txtBaseSalarial = new JFormattedTextField(nf);
         txtBaseSalarial.setColumns(10);
+        estaEnModoEdicion = true;
+        this.ponerModoEdicion();
+        this.cargarDatosTabla();
     }
 
     /**
@@ -122,7 +129,7 @@ public class VentanaSalario extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -190,7 +197,7 @@ public class VentanaSalario extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -229,10 +236,14 @@ public class VentanaSalario extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarMouseClicked
 
     private void tblSalariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSalariosMouseClicked
-        if(evt.getClickCount()> 1){
+        if (evt.getClickCount() > 1) {
             JTable tabla1 = (JTable) evt.getSource();
             this.codigoAnterior = (String) tabla1.getModel().getValueAt(tabla1.getSelectedRow(), 0);
-            salarioSeleccionado = this.nomina.obtenerSalarioPorCodigo(this.codigoAnterior);
+            try {
+                salarioSeleccionado = this.nomina.obtenerSalarioPorCodigo(this.codigoAnterior);
+            } catch (NominaException ex) {
+                Utilidades.mostrarMensajeError(this, "No se pudo obtener el salario seleccionado");
+            }
             estaEnModoEdicion = true;
             ponerModoEdicion();
         }
@@ -266,55 +277,66 @@ public class VentanaSalario extends javax.swing.JFrame {
 
     private void agregar() {
         String codigo = txtCodigo.getText();
-        Long base = ((Integer)(spnGrado.getValue())).longValue();
+        Long base = ((Integer) (spnGrado.getValue())).longValue();
         Double baseSalario = Double.valueOf(txtBaseSalarial.getText());
         Salario sl = new Salario(codigo, base, baseSalario);
-        this.nomina.agregarSalario(sl);
-        JOptionPane.showMessageDialog(this, "Se agregó correctamente el Salario",
-                "Agregar Salario", JOptionPane.INFORMATION_MESSAGE);
-        spnGrado.setValue(0);
-        UtilidadesVista.limpiarComponenteTexto(txtCodigo, txtBaseSalarial);
-        this.cargarDatosTabla();
-        
+        try {
+            this.nomina.agregarSalario(sl);
+            spnGrado.setValue(0);
+            Utilidades.limpiarComponenteTexto(txtCodigo, txtBaseSalarial);
+            this.cargarDatosTabla();
+            Utilidades.mostrarMensajeInfo(this, "Se agregó correctamente el Salario");
+        } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
+        }
     }
 
     private void modificar() {
         int rm = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
                 "Modificar Salario", JOptionPane.OK_CANCEL_OPTION);
         if (rm == JOptionPane.OK_OPTION) {
-            this.nomina.actualizarSalario(salarioSeleccionado, this.codigoAnterior);
-            estaEnModoEdicion = false;
-            this.ponerModoEdicion();
-            this.limpiarComponentes();
-            this.cargarDatosTabla();
-            this.tblSalarios.revalidate();
-            JOptionPane.showMessageDialog(this, "Se modificó la información",
-                    "Modificar Salario", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                this.nomina.actualizarSalario(salarioSeleccionado, this.codigoAnterior);
+                estaEnModoEdicion = false;
+                this.ponerModoEdicion();
+                this.limpiarComponentes();
+                this.cargarDatosTabla();
+                this.tblSalarios.revalidate();
+                Utilidades.mostrarMensajeInfo(this, "Se modificó la información");
+            } catch (NominaException ex) {
+                Utilidades.mostrarMensajeError(this, ex.getMessage());
+            }
         }
     }
-    
-    
 
     private void eliminar() {
         int rm = JOptionPane.showConfirmDialog(this, "¿Desea eliminar el Salario seleccionado?",
                 "Eliminar Salario", JOptionPane.OK_CANCEL_OPTION);
         if (rm == JOptionPane.OK_OPTION) {
-            this.nomina.eliminarSalario(salarioSeleccionado);
-            estaEnModoEdicion = false;
-            this.ponerModoEdicion();
-            this.limpiarComponentes();
-            this.cargarDatosTabla();
-            JOptionPane.showMessageDialog(this, "Se eliminó la información",
-                    "Eliminar Salario", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                this.nomina.eliminarSalario(salarioSeleccionado);
+                estaEnModoEdicion = false;
+                this.ponerModoEdicion();
+                this.limpiarComponentes();
+                this.cargarDatosTabla();
+                Utilidades.mostrarMensajeInfo(this, "Se eliminó la información");
+            } catch (NominaException ex) {
+                Utilidades.mostrarMensajeError(this, ex.getMessage());
+            }
         }
     }
 
     private void cargarDatosTabla() {
-        ModeloTablaSalario model = new ModeloTablaSalario(nomina.getSalarios());
-        tblSalarios.setModel(model);
-        tblSalarios.revalidate();
+        try {
+            ModeloTablaSalario model = new ModeloTablaSalario(nomina.obtenerTodosLosSalarios());
+            tblSalarios.setModel(model);
+            tblSalarios.revalidate();
+        } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
+        }
+
     }
-    
+
     private void ponerModoEdicion() {
         btnAgregar.setVisible(!estaEnModoEdicion);
         btnCancelarEdicion.setVisible(estaEnModoEdicion);

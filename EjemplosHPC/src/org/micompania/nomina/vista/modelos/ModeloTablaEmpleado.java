@@ -54,13 +54,13 @@ public class ModeloTablaEmpleado implements TableModel{
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        Empleado emp = empleados.get(rowIndex);
         switch(columnIndex){
-            case 0: return empleados.get(rowIndex).getCodigoEmpleado();
-            case 1: return empleados.get(rowIndex).getPrimerNombre()+" "+
-                    empleados.get(rowIndex).getSegundoNombre()+" "+
-                    empleados.get(rowIndex).getApellido();
-            case 2: return empleados.get(rowIndex).getSalario().getGrado();
-            case 3: return empleados.get(rowIndex).getDepartamento().getNombre();
+            
+            case 0: return emp.getCodigoEmpleado();
+            case 1: return emp.getNombres()+" "+emp.getApellidos();
+            case 2: return emp.getSalario().getGrado();
+            case 3: return emp.getDepartamento().getNombre();
             default: return "";
         }
     }

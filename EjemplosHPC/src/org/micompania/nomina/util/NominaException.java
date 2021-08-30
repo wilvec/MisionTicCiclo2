@@ -1,5 +1,6 @@
 package org.micompania.nomina.util;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,19 @@ public class NominaException extends Exception {
         CODIGOS_ERROR.put(4, "Existe un registro relacionado con este "
                 + "elemento y no se puede borrar/actualizar");
         CODIGOS_ERROR.put(0, "Problemas de conexion a la bd ");
+        
+        //Algunos códigos de error de mysql:
+        //https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
+        //https://fromdual.com/mysql-error-codes-and-messages-1200-1249
+        CODIGOS_ERROR.put(1062, "El registro con el código que intenta "
+                + "agregar ya existe en la base de datos");
+        CODIGOS_ERROR.put(1216, "No se puede agregar o actualizar el "
+                + "elemento en la tabla. Tiene otros elementos "
+                + "asociados. Favor revisar.");
+        CODIGOS_ERROR.put(1217 , "No se puede actualizar o eliminar el "
+                + "elemento en la tabla. Tiene otros elementos "
+                + "asociados. Favor revisar.");
+        
     }
     
     private Integer codigoExcepcion;
@@ -39,11 +53,22 @@ public class NominaException extends Exception {
     public NominaException(Integer codigoExcepcion, String mensajeDetalleExcepcion) {
         this.codigoExcepcion = codigoExcepcion;
         this.mensajeDetalleExcepcion = mensajeDetalleExcepcion;
+        Utilidades.printLogToConsole(this);
+    }
+
+    public NominaException(Throwable cause) {
+        super(cause);
+        if(cause instanceof SQLException){
+            SQLException sqlEx = (SQLException) cause;
+            this.codigoExcepcion = sqlEx.getErrorCode();
+            this.mensajeDetalleExcepcion = CODIGOS_ERROR.get(sqlEx.getErrorCode());
+        }
+         Utilidades.printLogToConsole(this);
     }
 
     @Override
     public String getMessage() {
-        return CODIGOS_ERROR.get(this.codigoExcepcion);
+        return this.getMensajeDetalleExcepcion();
     }
     
        

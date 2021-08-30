@@ -3,10 +3,14 @@ package org.micompania.nomina.controlador;
 import java.util.ArrayList;
 import java.util.List;
 import org.micompania.nomina.dao.DepartamentoDAOJdbcImpl;
+import org.micompania.nomina.dao.EmpleadoDAOJDBCImpl;
 import org.micompania.nomina.dao.IDepartamentoDAO;
-import org.micompania.nomina.modelo.Contratista;
+import org.micompania.nomina.dao.IPersonaDAO;
+import org.micompania.nomina.dao.ISalarioDAO;
+import org.micompania.nomina.dao.SalarioDAOJdbcImpl;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
+import org.micompania.nomina.modelo.Persona;
 import org.micompania.nomina.modelo.Salario;
 import org.micompania.nomina.util.NominaException;
 
@@ -28,9 +32,19 @@ public class NominaControlador {
     private final List<Salario> salarios;
 
     /**
-     * Objeto DAO para la gestión de base de datos
+     * Objeto DAO para la gestión de base de datos de departamento
      */
-    private final IDepartamentoDAO dao;
+    private final IDepartamentoDAO daoDepartamento;
+    
+    /**
+     * Objeto DAO para la gestión de base de datos de empleados
+     */
+    private final IPersonaDAO daoEmpleado;
+    
+    /**
+     * Objeto DAO para la gestión de base de datos de salario
+     */
+    private final ISalarioDAO daoSalario;
 
     /**
      * Crea un objeto Controlador de Nómina
@@ -39,7 +53,9 @@ public class NominaControlador {
         departamentos = new ArrayList<>();
         salarios = new ArrayList<>();
         //dao = new DepartamentoDAOMemoriaImpl(departamentos);
-        dao = new DepartamentoDAOJdbcImpl(departamentos);
+        daoDepartamento = new DepartamentoDAOJdbcImpl(departamentos);
+        daoSalario = new SalarioDAOJdbcImpl(salarios);
+        daoEmpleado = new EmpleadoDAOJDBCImpl(new ArrayList<>());
     }
 
     //----------- Departamentos--------------- 
@@ -49,7 +65,7 @@ public class NominaControlador {
      * @return la lista de Departamentos
      */
     public List<Departamento> obtenerTodosLosDepartamentos() throws NominaException {
-        return dao.obtenerTodosLosDepartamentos();
+        return daoDepartamento.obtenerTodosLosDepartamentos();
     }
 
     /**
@@ -60,7 +76,7 @@ public class NominaControlador {
      * @throws org.micompania.nomina.util.NominaException
      */
     public Departamento obtenerDepartmentoPorCodigo(String codigo) throws NominaException {
-        return dao.obtenerDepartmentoPorCodigo(codigo);
+        return daoDepartamento.obtenerDepartmentoPorCodigo(codigo);
     }
 
     /**
@@ -69,7 +85,7 @@ public class NominaControlador {
      * @throws org.micompania.nomina.util.NominaException
      */
     public void agregarDepartamento(Departamento depto) throws NominaException {
-        dao.agregarDepartamento(depto);
+        daoDepartamento.agregarDepartamento(depto);
     }
 
     /**
@@ -79,7 +95,7 @@ public class NominaControlador {
      * @throws org.micompania.nomina.util.NominaException
      */
     public void actualizarDepartamento(Departamento depto, String codDeptoAnterior) throws NominaException {
-        dao.actualizarDepartamento(depto, codDeptoAnterior);
+        daoDepartamento.actualizarDepartamento(depto, codDeptoAnterior);
     }
 
     /**
@@ -88,7 +104,7 @@ public class NominaControlador {
      * @throws org.micompania.nomina.util.NominaException
      */
     public void eliminarDepartamento(Departamento depto) throws NominaException {
-        dao.eliminarDepartamento(depto);
+        daoDepartamento.eliminarDepartamento(depto);
     }
 
     //----------- Salarios ------------------- 
@@ -96,61 +112,103 @@ public class NominaControlador {
     /**
      * Devuelve la lista de salarios de la nómina
      * @return la lista de los salarios
+     * @throws org.micompania.nomina.util.NominaException
      */
-    public List<Salario> getSalarios() {
-        return salarios;
+    public List<Salario> obtenerTodosLosSalarios() throws NominaException {
+        return daoSalario.obtenerTodosLosSalarios();
     }
 
     /**
      * Obtiene un objeto salario a partir de un código dado
      * @param codigo el código del salario a buscar
      * @return El Objeto Salario recuperado o null si no se encontró
+     * @throws org.micompania.nomina.util.NominaException
      */
-    public Salario obtenerSalarioPorCodigo(String codigo) {
-        for (Salario sal : salarios) {
-            if (sal.getCodigo().equals(codigo)) {
-                return sal;
-            }
-        }
-        return null;
+    public Salario obtenerSalarioPorCodigo(String codigo) throws NominaException {
+        return daoSalario.obtenerSalarioPorCodigo(codigo);
     }
 
     /**
      * Actualiza los datos de un salario a partir de un código dado
      * @param salario el objeto a actualizar
      * @param codigoAnterior el código anterior del salario. 
+     * @throws org.micompania.nomina.util.NominaException 
      */
-    public void actualizarSalario(Salario salario, String codigoAnterior) {
-        int indice = 0;
-        for (Salario sal : salarios) {
-            if (sal.getCodigo().equals(codigoAnterior)) {
-                indice = salarios.indexOf(sal);
-            }
-        }
-        salarios.set(indice, salario);
+    public void actualizarSalario(Salario salario, String codigoAnterior) throws NominaException {
+       daoSalario.actualizarSalario(salario, codigoAnterior);
     }
 
     /**
      * Quita un salario de la nómina
      * @param salario el objeto a eliminar
+     * @throws org.micompania.nomina.util.NominaException
      */
-    public void eliminarSalario(Salario salario) {
-        if (salarios.contains(salario)) {
-            salarios.remove(salario);
-        }
+    public void eliminarSalario(Salario salario) throws NominaException {
+       daoSalario.eliminarSalario(salario);
     }
+
+    /**
+     * Agrega un tipo de salario a la nómina.
+     * @param salario 
+     * @throws org.micompania.nomina.util.NominaException 
+     */
+    public void agregarSalario(Salario salario) throws NominaException {
+        daoSalario.agregarSalario(salario);
+    }
+    
 
     //Empleados
-    public void agregarEmpleado(Empleado p) {
-        p.getDepartamento().getPersonas().add(p);
+    
+    /**
+     * Devuelve la lista de empleados de la nómina
+     * @return la lista de los salarios
+     * @throws org.micompania.nomina.util.NominaException
+     */
+    public List<Empleado> obtenerTodosLosEmpleados() throws NominaException {
+        List<Persona> listaPersonas = daoEmpleado.obtenerTodosLosPersonas();
+        List<Empleado> lista = new ArrayList<>();
+        for (Persona persona : listaPersonas) {
+             lista.add((Empleado) persona);
+        }
+        return lista;
     }
 
-    public void agregarContratista(Contratista c) {
-        c.getDepartamento().getPersonas().add(c);
+    /**
+     * Obtiene un objeto salario a partir de un código dado
+     * @param codigo el código del salario a buscar
+     * @return El Objeto Salario recuperado o null si no se encontró
+     * @throws org.micompania.nomina.util.NominaException
+     */
+    public Empleado obtenerEmpleadoPorCodigo(Long codigo) throws NominaException {
+        return (Empleado) daoEmpleado.obtenerPersonaPorCodigo(codigo);
+    }
+    
+    /**
+     * Agrega un empleado a la nómina
+     * @param empleado
+     * @throws NominaException 
+     */
+    public void agregarEmpleado(Empleado empleado) throws NominaException {
+        daoEmpleado.agregarPersona(empleado);
     }
 
-    public void agregarSalario(Salario s) {
-        salarios.add(s);
+    /**
+     * Actualiza los datos de un salario a partir de un código dado
+     * @param persona el objeto a actualizar
+     * @param codigoAnterior el código anterior del salario. 
+     * @throws org.micompania.nomina.util.NominaException 
+     */
+    public void actualizarEmpleado(Persona persona, Long codigoAnterior) throws NominaException {
+        daoEmpleado.actualizarPersona(persona, codigoAnterior);
+    }
+
+    /**
+     * Quita un salario de la nómina
+     * @param persona
+     * @throws org.micompania.nomina.util.NominaException
+     */
+    public void eliminarPersona(Persona persona) throws NominaException {
+       daoEmpleado.eliminarPersona(persona);
     }
 
 }

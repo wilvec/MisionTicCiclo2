@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.micompania.nomina.modelo;
 
 import java.util.Date;
@@ -12,7 +7,8 @@ import java.util.Date;
  * @author GTX1050
  */
 public class Contratista extends Persona {
-    private String codigoArea;
+
+    public Long codigoContratista;
     private Date fechaInicio;
     private Date fechaFin;
     private Double valorContratado;
@@ -21,27 +17,21 @@ public class Contratista extends Persona {
     public Contratista() {
     }
 
-    public Contratista(String codigoArea, Date fechaInicio, Date fechaFin, 
-            Double valorContratado, Double valorPagado, 
-            int tipoDocumento, String documentoIdentidad, 
-            String primerNombre, String segundoNombre, 
-            String apellido, Date fechaNacimiento, char sexo, 
-            Departamento departamento) {
-        super(tipoDocumento, documentoIdentidad, primerNombre, segundoNombre, 
-                apellido, fechaNacimiento, sexo, departamento);
-        this.codigoArea = codigoArea;
+    public Contratista(Long codigoContratista, Date fechaInicio, Date fechaFin, Double valorContratado, Double valorPagado, Long codigo, int tipoDocumento, String documentoIdentidad, String nombres, String apellidos, Date fechaNacimiento, char sexo, Departamento departamento) {
+        super(codigo, tipoDocumento, documentoIdentidad, nombres, apellidos, fechaNacimiento, sexo, departamento);
+        this.codigoContratista = codigoContratista;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.valorContratado = valorContratado;
         this.valorPagado = valorPagado;
     }
-    
-    public String getCodigoArea() {
-        return codigoArea;
+
+    public Long getCodigoContratista() {
+        return codigoContratista;
     }
 
-    public void setCodigoArea(String codigoArea) {
-        this.codigoArea = codigoArea;
+    public void setCodigoContratista(Long codigoContratista) {
+        this.codigoContratista = codigoContratista;
     }
 
     public Date getFechaInicio() {
@@ -75,9 +65,12 @@ public class Contratista extends Persona {
     public void setValorPagado(Double valorPagado) {
         this.valorPagado = valorPagado;
     }
-    
-    
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "Contratista{" + "codigoContratista=" + codigoContratista
+                + ", fechaInicio=" + fechaInicio + ", fechaFin=" + fechaFin
+                + ", valorContratado=" + valorContratado + ", valorPagado="
+                + valorPagado + '}';
+    }
 }

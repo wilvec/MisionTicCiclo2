@@ -1,16 +1,15 @@
 package org.micompania.nomina.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.util.NominaException;
+import org.micompania.nomina.util.Utilidades;
 
 /**
  * Clase que implementa la Interfaz DAO para la entidad Departamento y
@@ -18,16 +17,11 @@ import org.micompania.nomina.util.NominaException;
  *
  * @author GTX1050
  */
-public class DepartamentoDAOJdbcImpl implements IDepartamentoDAO {
+public class DepartamentoDAOJdbcImpl extends AbstracDAOJdbc implements IDepartamentoDAO {
     /**
      * Lista de elementos de tipo Departamento
      */
     private final List<Departamento> departamentos;
-
-    /**
-     * Objeto de conexion a la base de datos.
-     */
-    private Connection conexion;
 
     /**
      * Construye un objeto DAO que implmenta la interfaz para la conexión
@@ -37,32 +31,11 @@ public class DepartamentoDAOJdbcImpl implements IDepartamentoDAO {
         this.departamentos = departamentos;
     }
 
-    private void conectar() throws ClassNotFoundException, SQLException {
-        String dbURL = "jdbc:mysql://localhost:3306/nomina";
-        String username = "nomina_user1";
-        String password = "nomina";
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conexion = DriverManager.getConnection(dbURL, username, password);
-            if (conexion != null) {
-                System.out.println("Conectado");
-            }
-        } catch (ClassNotFoundException ex) {
-            throw new ClassNotFoundException(ex.getMessage(), ex);
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
-        }
+    public DepartamentoDAOJdbcImpl(Connection conexion) {
+        this.conexion = conexion;
+        this.departamentos = new ArrayList<>();
     }
-
-    private void desconectar() throws SQLException {
-        if (conexion != null) {
-            try {
-                conexion.close();
-            } catch (SQLException ex) {
-                throw new SQLException(ex);
-            }
-        }
-    }
+    
 
     /**
      * {@inheritDoc}
@@ -84,12 +57,12 @@ public class DepartamentoDAOJdbcImpl implements IDepartamentoDAO {
         } catch (SQLException ex) {
             throw new NominaException(1, ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            Utilidades.printLogToConsole(ex);
         } finally {
             try {
                 this.desconectar();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                Utilidades.printLogToConsole(ex);
             }
         }
 
@@ -121,7 +94,7 @@ public class DepartamentoDAOJdbcImpl implements IDepartamentoDAO {
             try {
                 this.desconectar();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                Utilidades.printLogToConsole(ex);
             }
         }
 
@@ -141,18 +114,19 @@ public class DepartamentoDAOJdbcImpl implements IDepartamentoDAO {
             statement.setString(1, depto.getCodigo());
             statement.setString(2, depto.getNombre());
             int rowsInserted = statement.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println(" Inserción exitosa !");
+            if (rowsInserted <= 0) {
+                throw new NominaException(1, "No se realizó ninguna operación "
+                        + "de inserción. Favor verificar");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DepartamentoDAOJdbcImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NominaException(1, ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DepartamentoDAOJdbcImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NominaException(0, ex.getMessage());
         } finally {
             try {
                 this.desconectar();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                Utilidades.printLogToConsole(ex);
             }
         }
     }
@@ -171,19 +145,20 @@ public class DepartamentoDAOJdbcImpl implements IDepartamentoDAO {
             statement.setString(1, depto.getCodigo());
             statement.setString(2, depto.getNombre());
             statement.setString(3, codAnterior);
-            int rowsInserted = statement.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println(" Actualización exitosa !");
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated <= 0) {
+                throw new NominaException(1, "No se realizó ninguna operación "
+                        + "de inserción. Favor verificar");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DepartamentoDAOJdbcImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NominaException(1, ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DepartamentoDAOJdbcImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NominaException(0, ex.getMessage());
         } finally {
             try {
                 this.desconectar();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                Utilidades.printLogToConsole(ex);
             }
         }
     }
@@ -198,19 +173,20 @@ public class DepartamentoDAOJdbcImpl implements IDepartamentoDAO {
             String sql = "DELETE FROM departamento WHERE dep_codigo = ?";
             PreparedStatement statement = conexion.prepareStatement(sql);
             statement.setString(1, depto.getCodigo());
-            int rowsInserted = statement.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println(" Eliminación exitosa !");
+            int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted <= 0) {
+                throw new NominaException(1, "No se realizó ninguna operación "
+                        + "de eliminación. Favor verificar");
             }
         } catch (SQLException ex) {
             throw new NominaException(1, ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            throw new NominaException(1, ex.getMessage());
+            throw new NominaException(0, ex.getMessage());
         } finally {
             try {
                 this.desconectar();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                Utilidades.printLogToConsole(ex);
             }
         }
     }

@@ -1,13 +1,11 @@
 package org.micompania.nomina.vista;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.util.NominaException;
-import org.micompania.nomina.util.UtilidadesVista;
+import org.micompania.nomina.util.Utilidades;
 import org.micompania.nomina.vista.modelos.ModeloTablaDepto;
 
 /**
@@ -47,13 +45,13 @@ public class VentanaDepartamento extends javax.swing.JFrame {
             tblDepartamento.setModel(model);
             tblDepartamento.revalidate();
         } catch (NominaException ex) {
-            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
         }
 
     }
 
     private void limpiarComponentes() {
-        UtilidadesVista.limpiarComponenteTexto(txtCodigo, txtNombre);
+        Utilidades.limpiarComponenteTexto(txtCodigo, txtNombre);
     }
 
     private void ponerModoEdicion() {
@@ -79,11 +77,11 @@ public class VentanaDepartamento extends javax.swing.JFrame {
         depto.setNombre(nombre);
         try {
             this.nomina.agregarDepartamento(depto);
-            UtilidadesVista.limpiarComponenteTexto(txtCodigo, txtNombre);
+            Utilidades.limpiarComponenteTexto(txtCodigo, txtNombre);
             this.cargarDatosTabla();
-            UtilidadesVista.mostrarMensajeInfo(this, "Se agregó el departamento correctamente");
+            Utilidades.mostrarMensajeInfo(this, "Se agregó el departamento correctamente");
         } catch (NominaException ex) {
-            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
         }
 
     }
@@ -100,9 +98,9 @@ public class VentanaDepartamento extends javax.swing.JFrame {
                 this.ponerModoEdicion();
                 this.limpiarComponentes();
                 this.cargarDatosTabla();
-                UtilidadesVista.mostrarMensajeInfo(this, "Se modificó la información correctamente");
+                Utilidades.mostrarMensajeInfo(this, "Se modificó la información correctamente");
             } catch (NominaException ex) {
-                UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+                Utilidades.mostrarMensajeError(this, ex.getMessage());
             }
         } else if (respuestaMensaje == JOptionPane.NO_OPTION) {
             estaEnModoEdicion = false;
@@ -123,7 +121,7 @@ public class VentanaDepartamento extends javax.swing.JFrame {
             this.limpiarComponentes();
             this.cargarDatosTabla();
             } catch (NominaException ex) {
-                UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+                Utilidades.mostrarMensajeError(this, ex.getMessage());
             }
             
         } else if (respuestaMensaje == JOptionPane.NO_OPTION) {
@@ -318,7 +316,7 @@ public class VentanaDepartamento extends javax.swing.JFrame {
                 estaEnModoEdicion = true;
                 ponerModoEdicion();
             } catch (NominaException ex) {
-                UtilidadesVista.mostrarMensajeError(this, "No se pudo seleccionado el departamento: "+ex.getMessage());
+                Utilidades.mostrarMensajeError(this, "No se pudo seleccionado el departamento: "+ex.getMessage());
             }
         }
     }//GEN-LAST:event_tblDepartamentoMouseClicked

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.micompania.nomina.modelo;
 
 import java.util.Date;
@@ -12,7 +7,7 @@ import java.util.Date;
  * @author GTX1050
  */
 public class Empleado extends Persona {
-    private String codigoEmpleado;
+    private Long codigoEmpleado;
     private String usuario;
     private String password;
     private Salario salario;
@@ -20,25 +15,23 @@ public class Empleado extends Persona {
     public Empleado() {
     }
 
-    public Empleado(String codigoEmpleado, String usuario, String password, 
-            Salario salario, int tipoDocumento, String documentoIdentidad, 
-            String primerNombre, String segundoNombre, String apellido, 
+    public Empleado(Long codigoEmpleado, String usuario, String password, 
+            Salario salario, Long codigo, int tipoDocumento, 
+            String documentoIdentidad, String nombres, String apellidos, 
             Date fechaNacimiento, char sexo, Departamento departamento) {
-        super(tipoDocumento, documentoIdentidad, primerNombre, segundoNombre, 
-                apellido, fechaNacimiento, sexo, departamento);
+        super(codigo, tipoDocumento, documentoIdentidad, nombres, apellidos, 
+                fechaNacimiento, sexo, departamento);
         this.codigoEmpleado = codigoEmpleado;
         this.usuario = usuario;
         this.password = password;
         this.salario = salario;
     }
-    
-    
 
-    public String getCodigoEmpleado() {
+    public Long getCodigoEmpleado() {
         return codigoEmpleado;
     }
 
-    public void setCodigoEmpleado(String codigoEmpleado) {
+    public void setCodigoEmpleado(Long codigoEmpleado) {
         this.codigoEmpleado = codigoEmpleado;
     }
 

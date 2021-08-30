@@ -5,16 +5,12 @@
  */
 package org.micompania.nomina.vista;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JTable;
 import org.micompania.nomina.controlador.NominaControlador;
-import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
-import org.micompania.nomina.modelo.Persona;
 import org.micompania.nomina.util.NominaException;
-import org.micompania.nomina.util.UtilidadesVista;
+import org.micompania.nomina.util.Utilidades;
 import org.micompania.nomina.vista.modelos.ModeloTablaEmpleado;
 
 /**
@@ -24,8 +20,10 @@ import org.micompania.nomina.vista.modelos.ModeloTablaEmpleado;
 public class VentanaMostrarEmpleado extends javax.swing.JFrame {
     private NominaControlador nomina;
     private ModeloTablaEmpleado modeloTabla;
+    private VentanaEmpleado ventanaPadre;
+    private Long codigoAnterior;
     /**
-     * Creates new form VentanaMostrarEmpleado
+     * Creates new form VentanaMostrarEmpleados
      */
     public VentanaMostrarEmpleado() {
         initComponents();
@@ -33,17 +31,23 @@ public class VentanaMostrarEmpleado extends javax.swing.JFrame {
     
     private List<Empleado> obtenerTodosLosEmpleados(){
         try {
+            return this.nomina.obtenerTodosLosEmpleados();
+            /*try {
             List<Empleado> todos = new ArrayList<>();
             for(Departamento depto : nomina.obtenerTodosLosDepartamentos()){
-                for(Persona p : depto.getPersonas()){
-                    if(p instanceof Empleado){
-                        todos.add((Empleado) p);
-                    }
-                }
+            for(Persona p : depto.getPersonas()){
+            if(p instanceof Empleado){
+            todos.add((Empleado) p);
+            }
+            }
             }
             return todos;
+            } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
+            return null;
+            }*/
         } catch (NominaException ex) {
-            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
             return null;
         }
     }
@@ -53,6 +57,7 @@ public class VentanaMostrarEmpleado extends javax.swing.JFrame {
         initComponents();
         modeloTabla = new ModeloTablaEmpleado(this.obtenerTodosLosEmpleados());
         tblListaEmpleados.setModel(modeloTabla);
+        tblListaEmpleados.revalidate();
     }
 
     public NominaControlador getNomina() {
@@ -74,16 +79,15 @@ public class VentanaMostrarEmpleado extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblListaEmpleados = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setText("LISTA DE EMPLEADOS");
-
-        jScrollPane1.setViewportView(tblListaEmpleados);
 
         jButton1.setText("Cerrar");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -92,6 +96,15 @@ public class VentanaMostrarEmpleado extends javax.swing.JFrame {
             }
         });
 
+        tblListaEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblListaEmpleadosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblListaEmpleados);
+
+        jScrollPane2.setViewportView(jScrollPane1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -99,26 +112,26 @@ public class VentanaMostrarEmpleado extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(217, 217, 217)
-                        .addComponent(jButton1))
+                        .addGap(143, 143, 143)
+                        .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(146, 146, 146)
-                        .addComponent(jLabel1)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addGap(199, 199, 199)
+                        .addComponent(jButton1)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
+                .addGap(13, 13, 13)
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -128,10 +141,51 @@ public class VentanaMostrarEmpleado extends javax.swing.JFrame {
         setVisible(false);
     }//GEN-LAST:event_jButton1MouseClicked
 
+    private void tblListaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblListaEmpleadosMouseClicked
+        if(evt.getClickCount() > 1){
+            JTable tabla1 = (JTable) evt.getSource();
+            Long codigo = (Long) tabla1.getModel().getValueAt(tabla1.getSelectedRow(), 0);
+            this.setCodigoAnterior(codigo);
+            this.getVentanaPadre().setEstaEnModoEdicion(true);
+            this.getVentanaPadre().cargarEmpleado();
+            this.getVentanaPadre().revalidate();
+            this.dispose();
+        }
+    }//GEN-LAST:event_tblListaEmpleadosMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblListaEmpleados;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the codigoAnterior
+     */
+    public Long getCodigoAnterior() {
+        return codigoAnterior;
+    }
+
+    /**
+     * @param codigoAnterior the codigoAnterior to set
+     */
+    public void setCodigoAnterior(Long codigoAnterior) {
+        this.codigoAnterior = codigoAnterior;
+    }
+
+    /**
+     * @return the ventanaPadre
+     */
+    public VentanaEmpleado getVentanaPadre() {
+        return ventanaPadre;
+    }
+
+    /**
+     * @param ventanaPadre the ventanaPadre to set
+     */
+    public void setVentanaPadre(VentanaEmpleado ventanaPadre) {
+        this.ventanaPadre = ventanaPadre;
+    }
 }

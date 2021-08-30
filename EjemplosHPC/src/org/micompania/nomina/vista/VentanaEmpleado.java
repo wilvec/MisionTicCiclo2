@@ -2,22 +2,22 @@ package org.micompania.nomina.vista;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
 import org.micompania.nomina.modelo.Salario;
 import org.micompania.nomina.util.NominaException;
-import org.micompania.nomina.util.UtilidadesVista;
+import org.micompania.nomina.util.Utilidades;
 
 /**
  *
  * @author GTX1050
  */
 public class VentanaEmpleado extends javax.swing.JFrame {
+
+    private Empleado empleadoSeleccionado;
+    private boolean estaEnModoEdicion;
 
     public VentanaMostrarEmpleado getvMostrarEmpleados() {
         return vMostrarEmpleados;
@@ -33,20 +33,29 @@ public class VentanaEmpleado extends javax.swing.JFrame {
 
     public VentanaEmpleado() {
         initComponents();
+        estaEnModoEdicion = false;
+        ponerModoEdicion();
     }
 
     public VentanaEmpleado(NominaControlador nominaActual) {
         this.nominaActual = nominaActual;
         initComponents();
+        estaEnModoEdicion = false;
+        ponerModoEdicion();
 
     }
-    
-    public void llenarSalarios(){
-        DefaultComboBoxModel  modeloListaSalario = new DefaultComboBoxModel();
-        for(Salario salario : this.nominaActual.getSalarios()){
-            modeloListaSalario.addElement(salario);
+
+    public void llenarSalarios() {
+        try {
+            DefaultComboBoxModel modeloListaSalario = new DefaultComboBoxModel();
+            for (Salario salario : this.nominaActual.obtenerTodosLosSalarios()) {
+                modeloListaSalario.addElement(salario);
+            }
+            cboSalario.setModel(modeloListaSalario);
+        } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this, "No se pudo cargar la "
+                    + "lista de salarios");
         }
-        jboSalario.setModel(modeloListaSalario);
     }
 
     public void llenarListaDepartamentos() {
@@ -55,22 +64,106 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             for (Departamento depto : this.nominaActual.obtenerTodosLosDepartamentos()) {
                 modeloLista.addElement(depto);
             }
-            jboDepartamento.setModel(modeloLista);
+            cboDepartamento.setModel(modeloLista);
         } catch (NominaException ex) {
-            UtilidadesVista.mostrarMensajeError(this, ex.getMessage());
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
         }
     }
 
-    private void limpiarComponentes(){
-        jboDepartamento.setSelectedIndex(0);
-        btoGrpTipoDocumento.clearSelection();
-        UtilidadesVista.limpiarComponenteTexto(txtApellido,txtCodigo,
-                txtFechaNacimiento,txtNombre,
-                txtNumeroDocumento,txtPassword, txtUsuario);
-        btoGrpSexo.clearSelection();
-        jboSalario.setSelectedIndex(0);
+    private void agregar() {
+        Empleado emp = this.obtenerEmpleadoDeVista();
+        try {
+            nominaActual.agregarEmpleado(emp);
+            Utilidades.mostrarMensajeInfo(this, "Se agregó empleado a la nómina");
+            limpiarComponentes();
+        } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
+        }
     }
-    
+
+    private void modificar() {
+        Empleado emp = this.obtenerEmpleadoDeVista();
+        try {
+            nominaActual.actualizarEmpleado(emp, this.vMostrarEmpleados.getCodigoAnterior());
+            Utilidades.mostrarMensajeInfo(this, "Se actualizó empleado a la nómina");
+            limpiarComponentes();
+        } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
+        }
+    }
+
+    private void eliminar() {
+        Empleado emp = this.obtenerEmpleadoDeVista();
+        try {
+            this.nominaActual.eliminarPersona(emp);
+            Utilidades.mostrarMensajeInfo(this, "Se eliminó empleado a la nómina");
+            limpiarComponentes();
+        } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this, ex.getMessage());
+        }
+    }
+
+    private void limpiarComponentes() {
+        if (cboDepartamento.getModel().getSize() > 0) {
+            cboDepartamento.setSelectedIndex(0);
+        }
+        btoGrpTipoDocumento.clearSelection();
+        Utilidades.limpiarComponenteTexto(txtApellido, txtCodigo,
+                txtFechaNacimiento, txtNombre, txtNumeroDocumento,
+                txtPassword, txtUsuario);
+        btoGrpSexo.clearSelection();
+        if (cboSalario.getModel().getSize() > 0) {
+            cboSalario.setSelectedIndex(0);
+        }
+    }
+
+    public void cargarEmpleado() {
+        try {
+            Empleado emp = this.nominaActual.obtenerEmpleadoPorCodigo(this.vMostrarEmpleados.getCodigoAnterior());
+            cboDepartamento.setSelectedItem(emp.getDepartamento());
+            switch (emp.getTipoDocumento()) {
+                case 1:
+                    optCC.setSelected(true);
+                    break;
+                case 2:
+                    optCE.setSelected(true);
+                    break;
+                case 3:
+                    optPas.setSelected(true);
+                    break;
+                default:
+                    break;
+            }
+            txtNumeroDocumento.setText(emp.getDocumentoIdentidad());
+            txtNombre.setText(emp.getNombres());
+            txtApellido.setText(emp.getApellidos());
+            txtFechaNacimiento.setText(new SimpleDateFormat("dd/MM/yyyy").format(emp.getFechaNacimiento()));
+            if (emp.getSexo() == 'F') {
+                optSexoF.setSelected(false);
+            } else {
+                optSexoM.setSelected(true);
+            }
+            txtCodigo.setText(String.valueOf(emp.getCodigo()));
+            txtUsuario.setText(emp.getUsuario());
+            txtPassword.setText(emp.getPassword());
+            cboSalario.setSelectedItem(emp.getSalario());
+            //Modo edicion
+            this.ponerModoEdicion();
+            txtApellido.revalidate();
+        } catch (NominaException ex) {
+            Utilidades.mostrarMensajeError(this,
+                    "No se pudo mostrar el empleado seleccionado: "
+                    + ex.getMessage());
+        }
+    }
+
+    private void ponerModoEdicion() {
+        btnAgregar.setVisible(!estaEnModoEdicion);
+        btnCancelarEdicion.setVisible(estaEnModoEdicion);
+        btnEliminar.setVisible(estaEnModoEdicion);
+        btnModificar.setVisible(estaEnModoEdicion);
+    }
+
     private Empleado obtenerEmpleadoDeVista() {
         int tipoDocumento = 0;
         if (optCC.isSelected()) {
@@ -81,15 +174,16 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             tipoDocumento = 3;
         }
         String documentoIdentidad = txtNumeroDocumento.getText();
-        String primerNombre = txtNombre.getText();
-        String apellido = txtApellido.getText();
+        String nombres = txtNombre.getText();
+        String apellidos = txtApellido.getText();
 
         Date fechaNacimiento = null;
         try {
             fechaNacimiento = new SimpleDateFormat("dd/MM/yyyy")
                     .parse(txtFechaNacimiento.getText());
         } catch (Exception e) {
-            System.out.println("No se pudo realizar el parseo de la fecha de nacimiento");
+            Utilidades.mostrarMensajeError(this,
+                    "No se pudo realizar el parseo de la fecha de nacimiento");
         }
         char sexo = 'F';
         if (optSexoF.isSelected()) {
@@ -97,19 +191,16 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         } else if (optSexoM.isSelected()) {
             sexo = 'M';
         }
-        Departamento depto = (Departamento) jboDepartamento.getModel().getSelectedItem();
+        Departamento depto = (Departamento) cboDepartamento.getModel().getSelectedItem();
 
-        String codigoEmpleado = txtCodigo.getText();
+        Long codigoEmpleado = Long.valueOf(txtCodigo.getText());
         String usuario = txtUsuario.getText();
-        String password = txtPassword.getText();
-        Salario salario = (Salario) jboSalario.getModel().getSelectedItem();
-        
-        Empleado emp = new Empleado(codigoEmpleado, usuario,
-                password, salario, tipoDocumento, documentoIdentidad,
-                primerNombre, "", apellido,
-                fechaNacimiento, sexo, depto);
-        
-        return emp;
+        String password = String.valueOf(txtPassword.getPassword());
+        Salario salario = (Salario) cboSalario.getModel().getSelectedItem();
+        Empleado empleado = new Empleado(codigoEmpleado, usuario, password,
+                salario, codigoEmpleado, tipoDocumento, documentoIdentidad,
+                nombres, apellidos, fechaNacimiento, sexo, depto);
+        return empleado;
     }
 
     public NominaControlador getNominaActual() {
@@ -133,7 +224,7 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         btoGrpTipoDocumento = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         lblDepartamento = new javax.swing.JLabel();
-        jboDepartamento = new javax.swing.JComboBox<>();
+        cboDepartamento = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         lblTipoDocumento = new javax.swing.JLabel();
         lblNroDocumento = new javax.swing.JLabel();
@@ -158,10 +249,13 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         lblPassword = new javax.swing.JLabel();
         txtPassword = new javax.swing.JPasswordField();
         lblSalario = new javax.swing.JLabel();
-        jboSalario = new javax.swing.JComboBox<>();
-        btnGuardar = new javax.swing.JButton();
+        cboSalario = new javax.swing.JComboBox<>();
+        btnAgregar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnCancelarEdicion = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Empleados");
@@ -177,9 +271,9 @@ public class VentanaEmpleado extends javax.swing.JFrame {
 
         lblNroDocumento.setText("Número documento");
 
-        lblNombre.setText("Nombre");
+        lblNombre.setText("Nombres");
 
-        lblApellido.setText("Apellido");
+        lblApellido.setText("Apellidos");
 
         lblFecNacimiento.setText("Fecha Nacimiento");
 
@@ -294,35 +388,34 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(txtUsuario)
                     .addComponent(txtPassword)
-                    .addComponent(jboSalario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cboSalario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(72, 72, 72))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigo)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblUsuario)
                     .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblSalario)
-                    .addComponent(jboSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                    .addComponent(cboSalario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnGuardar.setText("Guardar");
-        btnGuardar.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnAgregar.setText("Guardar");
+        btnAgregar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnGuardarMouseClicked(evt);
+                btnAgregarMouseClicked(evt);
             }
         });
 
@@ -340,6 +433,27 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             }
         });
 
+        btnModificar.setText("Modificar");
+        btnModificar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnModificarMouseClicked(evt);
+            }
+        });
+
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnEliminarMouseClicked(evt);
+            }
+        });
+
+        btnCancelarEdicion.setText("Cancelar Edición");
+        btnCancelarEdicion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCancelarEdicionMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -350,24 +464,31 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                         .addGap(204, 204, 204)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(157, 157, 157)
-                        .addComponent(btnGuardar)
-                        .addGap(34, 34, 34)
-                        .addComponent(jButton1)
-                        .addGap(55, 55, 55)
-                        .addComponent(btnSalir))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(22, 22, 22)
-                                .addComponent(lblDepartamento)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                                .addComponent(jboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(42, 42, 42))
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnAgregar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnModificar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEliminar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnCancelarEdicion, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnSalir)
+                                .addGap(33, 33, 33))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addGap(22, 22, 22)
+                                    .addComponent(lblDepartamento)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                                    .addComponent(cboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(42, 42, 42))
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -377,17 +498,20 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDepartamento)
-                    .addComponent(jboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnGuardar)
+                    .addComponent(btnAgregar)
                     .addComponent(btnSalir)
-                    .addComponent(jButton1))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(jButton1)
+                    .addComponent(btnModificar)
+                    .addComponent(btnEliminar)
+                    .addComponent(btnCancelarEdicion))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -397,30 +521,43 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         setVisible(false);
     }//GEN-LAST:event_btnSalirMouseClicked
 
-    private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseClicked
-        Empleado emp = this.obtenerEmpleadoDeVista();
-        nominaActual.agregarEmpleado(emp);
-        JOptionPane.showMessageDialog(this, "Se agregó empleado a la nómina",
-                "Agregar Empleado", JOptionPane.INFORMATION_MESSAGE);
-        limpiarComponentes();
-    }//GEN-LAST:event_btnGuardarMouseClicked
+    private void btnAgregarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseClicked
+        this.agregar();
+    }//GEN-LAST:event_btnAgregarMouseClicked
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         vMostrarEmpleados = new VentanaMostrarEmpleado(nominaActual);
+        vMostrarEmpleados.setVentanaPadre(this);
         vMostrarEmpleados.setVisible(true);
     }//GEN-LAST:event_jButton1MouseClicked
 
+    private void btnCancelarEdicionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarEdicionMouseClicked
+        this.estaEnModoEdicion = false;
+        this.ponerModoEdicion();
+    }//GEN-LAST:event_btnCancelarEdicionMouseClicked
+
+    private void btnModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModificarMouseClicked
+        this.modificar();
+    }//GEN-LAST:event_btnModificarMouseClicked
+
+    private void btnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseClicked
+        this.eliminar();
+    }//GEN-LAST:event_btnEliminarMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnCancelarEdicion;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnSalir;
     private javax.swing.ButtonGroup btoGrpSexo;
     private javax.swing.ButtonGroup btoGrpTipoDocumento;
+    private javax.swing.JComboBox<String> cboDepartamento;
+    private javax.swing.JComboBox<String> cboSalario;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JComboBox<String> jboDepartamento;
-    private javax.swing.JComboBox<String> jboSalario;
     private javax.swing.JLabel lblApellido;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDepartamento;
@@ -445,4 +582,32 @@ public class VentanaEmpleado extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the empleadoSeleccionado
+     */
+    public Empleado getEmpleadoSeleccionado() {
+        return empleadoSeleccionado;
+    }
+
+    /**
+     * @param empleadoSeleccionado the empleadoSeleccionado to set
+     */
+    public void setEmpleadoSeleccionado(Empleado empleadoSeleccionado) {
+        this.empleadoSeleccionado = empleadoSeleccionado;
+    }
+
+    /**
+     * @return the estaEnModoEdicion
+     */
+    public boolean isEstaEnModoEdicion() {
+        return estaEnModoEdicion;
+    }
+
+    /**
+     * @param estaEnModoEdicion the estaEnModoEdicion to set
+     */
+    public void setEstaEnModoEdicion(boolean estaEnModoEdicion) {
+        this.estaEnModoEdicion = estaEnModoEdicion;
+    }
 }
