@@ -6,7 +6,7 @@ import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.util.NominaException;
 import org.micompania.nomina.util.Utilidades;
-import org.micompania.nomina.vista.modelos.ModeloTablaDepto;
+import org.micompania.nomina.vista.modelos.ModeloTablaDepartamento;
 
 /**
  *
@@ -39,9 +39,9 @@ public class VentanaDepartamento extends javax.swing.JFrame {
     }
 
     private void cargarDatosTabla() {
-        ModeloTablaDepto model;
+        ModeloTablaDepartamento model;
         try {
-            model = new ModeloTablaDepto(nomina.obtenerTodosLosDepartamentos());
+            model = new ModeloTablaDepartamento(nomina.obtenerTodosLosDepartamentos());
             tblDepartamento.setModel(model);
             tblDepartamento.revalidate();
         } catch (NominaException ex) {

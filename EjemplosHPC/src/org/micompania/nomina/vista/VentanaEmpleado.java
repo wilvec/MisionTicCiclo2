@@ -3,6 +3,7 @@ package org.micompania.nomina.vista;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import org.micompania.nomina.controlador.NominaControlador;
 import org.micompania.nomina.modelo.Departamento;
 import org.micompania.nomina.modelo.Empleado;
@@ -15,36 +16,36 @@ import org.micompania.nomina.util.Utilidades;
  * @author GTX1050
  */
 public class VentanaEmpleado extends javax.swing.JFrame {
-
+    
     private Empleado empleadoSeleccionado;
     private boolean estaEnModoEdicion;
-
+    
     public VentanaMostrarEmpleado getvMostrarEmpleados() {
         return vMostrarEmpleados;
     }
-
+    
     public void setvMostrarEmpleados(VentanaMostrarEmpleado vMostrarEmpleados) {
         this.vMostrarEmpleados = vMostrarEmpleados;
     }
-
+    
     private NominaControlador nominaActual;
-
+    
     private VentanaMostrarEmpleado vMostrarEmpleados;
-
+    
     public VentanaEmpleado() {
         initComponents();
         estaEnModoEdicion = false;
         ponerModoEdicion();
     }
-
+    
     public VentanaEmpleado(NominaControlador nominaActual) {
         this.nominaActual = nominaActual;
         initComponents();
         estaEnModoEdicion = false;
         ponerModoEdicion();
-
+        
     }
-
+    
     public void llenarSalarios() {
         try {
             DefaultComboBoxModel modeloListaSalario = new DefaultComboBoxModel();
@@ -54,10 +55,10 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             cboSalario.setModel(modeloListaSalario);
         } catch (NominaException ex) {
             Utilidades.mostrarMensajeError(this, "No se pudo cargar la "
-                    + "lista de salarios");
+                    + "lista de salarios: " + ex.getMessage());
         }
     }
-
+    
     public void llenarListaDepartamentos() {
         try {
             DefaultComboBoxModel modeloLista = new DefaultComboBoxModel();
@@ -69,40 +70,46 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             Utilidades.mostrarMensajeError(this, ex.getMessage());
         }
     }
-
+    
     private void agregar() {
         Empleado emp = this.obtenerEmpleadoDeVista();
         try {
             nominaActual.agregarEmpleado(emp);
             Utilidades.mostrarMensajeInfo(this, "Se agregó empleado a la nómina");
             limpiarComponentes();
+            this.estaEnModoEdicion = false;
+            this.ponerModoEdicion();
         } catch (NominaException ex) {
             Utilidades.mostrarMensajeError(this, ex.getMessage());
         }
     }
-
+    
     private void modificar() {
         Empleado emp = this.obtenerEmpleadoDeVista();
         try {
             nominaActual.actualizarEmpleado(emp, this.vMostrarEmpleados.getCodigoAnterior());
             Utilidades.mostrarMensajeInfo(this, "Se actualizó empleado a la nómina");
             limpiarComponentes();
+            this.estaEnModoEdicion = false;
+            this.ponerModoEdicion();
         } catch (NominaException ex) {
             Utilidades.mostrarMensajeError(this, ex.getMessage());
         }
     }
-
+    
     private void eliminar() {
         Empleado emp = this.obtenerEmpleadoDeVista();
         try {
             this.nominaActual.eliminarPersona(emp);
             Utilidades.mostrarMensajeInfo(this, "Se eliminó empleado a la nómina");
             limpiarComponentes();
+            this.estaEnModoEdicion = false;
+            this.ponerModoEdicion();
         } catch (NominaException ex) {
             Utilidades.mostrarMensajeError(this, ex.getMessage());
         }
     }
-
+    
     private void limpiarComponentes() {
         if (cboDepartamento.getModel().getSize() > 0) {
             cboDepartamento.setSelectedIndex(0);
@@ -116,11 +123,17 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             cboSalario.setSelectedIndex(0);
         }
     }
-
+    
     public void cargarEmpleado() {
         try {
             Empleado emp = this.nominaActual.obtenerEmpleadoPorCodigo(this.vMostrarEmpleados.getCodigoAnterior());
-            cboDepartamento.setSelectedItem(emp.getDepartamento());
+            for (int i = 0; i < cboDepartamento.getItemCount(); i++) {
+                Departamento depto = cboDepartamento.getModel().getElementAt(i);
+                if (depto.equals(emp.getDepartamento())) {
+                    cboDepartamento.setSelectedIndex(i);
+                    break;
+                }
+            }
             switch (emp.getTipoDocumento()) {
                 case 1:
                     optCC.setSelected(true);
@@ -146,6 +159,14 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             txtCodigo.setText(String.valueOf(emp.getCodigo()));
             txtUsuario.setText(emp.getUsuario());
             txtPassword.setText(emp.getPassword());
+            for (int i = 0; i < cboSalario.getItemCount(); i++) {
+                Salario salario = cboSalario.getModel().getElementAt(i);
+                if (salario.equals(emp.getSalario())) {
+                    cboSalario.setSelectedIndex(i);
+                    break;
+                }
+            }
+            
             cboSalario.setSelectedItem(emp.getSalario());
             //Modo edicion
             this.ponerModoEdicion();
@@ -156,14 +177,17 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                     + ex.getMessage());
         }
     }
-
+    
     private void ponerModoEdicion() {
         btnAgregar.setVisible(!estaEnModoEdicion);
         btnCancelarEdicion.setVisible(estaEnModoEdicion);
         btnEliminar.setVisible(estaEnModoEdicion);
         btnModificar.setVisible(estaEnModoEdicion);
+        if (!estaEnModoEdicion) {
+            this.limpiarComponentes();
+        }
     }
-
+    
     private Empleado obtenerEmpleadoDeVista() {
         int tipoDocumento = 0;
         if (optCC.isSelected()) {
@@ -176,7 +200,7 @@ public class VentanaEmpleado extends javax.swing.JFrame {
         String documentoIdentidad = txtNumeroDocumento.getText();
         String nombres = txtNombre.getText();
         String apellidos = txtApellido.getText();
-
+        
         Date fechaNacimiento = null;
         try {
             fechaNacimiento = new SimpleDateFormat("dd/MM/yyyy")
@@ -192,7 +216,7 @@ public class VentanaEmpleado extends javax.swing.JFrame {
             sexo = 'M';
         }
         Departamento depto = (Departamento) cboDepartamento.getModel().getSelectedItem();
-
+        
         Long codigoEmpleado = Long.valueOf(txtCodigo.getText());
         String usuario = txtUsuario.getText();
         String password = String.valueOf(txtPassword.getPassword());
@@ -202,11 +226,11 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                 nombres, apellidos, fechaNacimiento, sexo, depto);
         return empleado;
     }
-
+    
     public NominaControlador getNominaActual() {
         return nominaActual;
     }
-
+    
     public void setNominaActual(NominaControlador nominaActual) {
         this.nominaActual = nominaActual;
     }
@@ -483,7 +507,7 @@ public class VentanaEmpleado extends javax.swing.JFrame {
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                     .addGap(22, 22, 22)
                                     .addComponent(lblDepartamento)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                                     .addComponent(cboDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGap(42, 42, 42))
                                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -537,11 +561,20 @@ public class VentanaEmpleado extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarEdicionMouseClicked
 
     private void btnModificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModificarMouseClicked
-        this.modificar();
+        int respuestaMensaje = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
+                this.getTitle(), JOptionPane.YES_NO_OPTION);
+        if(respuestaMensaje == JOptionPane.YES_OPTION){
+            this.modificar();
+        }
     }//GEN-LAST:event_btnModificarMouseClicked
 
     private void btnEliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEliminarMouseClicked
-        this.eliminar();
+        int respuestaMensaje = JOptionPane.showConfirmDialog(this, "Desea modificar los datos?",
+                this.getTitle(), JOptionPane.YES_NO_OPTION);
+        if(respuestaMensaje == JOptionPane.YES_OPTION){
+            this.eliminar();
+        }
+        
     }//GEN-LAST:event_btnEliminarMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -552,8 +585,8 @@ public class VentanaEmpleado extends javax.swing.JFrame {
     private javax.swing.JButton btnSalir;
     private javax.swing.ButtonGroup btoGrpSexo;
     private javax.swing.ButtonGroup btoGrpTipoDocumento;
-    private javax.swing.JComboBox<String> cboDepartamento;
-    private javax.swing.JComboBox<String> cboSalario;
+    private javax.swing.JComboBox<Departamento> cboDepartamento;
+    private javax.swing.JComboBox<Salario> cboSalario;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

@@ -70,9 +70,10 @@ public class EmpleadoDAOJDBCImpl extends AbstracDAOJdbc implements IEmpleadoDAO 
         Empleado empleado = null;
         try {
             this.conectar();
-            String sql = "SELECT * FROM persona p natural join empleado e";
-            Statement statement = conexion.createStatement();
-            ResultSet result = statement.executeQuery(sql);
+            String sql = "SELECT * FROM persona p natural join empleado e WHERE p.per_codigo = ?";
+            PreparedStatement statement = conexion.prepareStatement(sql);
+            statement.setLong(1, codigo);
+            ResultSet result = statement.executeQuery();
             while (result.next()) {
                 empleado = this.obtenerEmpleadoDesdeResultSet(result);
             }
@@ -183,24 +184,17 @@ public class EmpleadoDAOJDBCImpl extends AbstracDAOJdbc implements IEmpleadoDAO 
         }*/
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void actualizarPersona(Persona persona, Long codPersonaAnterior) throws NominaException {
-        //Se debe actualizar la persona y luego el empleado!
+    private void actualizarDatoPersona(Persona persona, 
+            Long codPersonaAnterior) throws NominaException {
         try {
             this.conectar();
-            String sip = " UPDATE persona SET per_codigo = ?, "
+            String sqlPersona = " UPDATE persona SET per_codigo = ?, "
                     + "per_tipodocumento = ?, per_numerodocumento = ?, "
                     + "per_nombres = ?, per_apellidos = ?, "
                     + "per_fechanacimiento = ?, per_sexo = ?, "
                     + "dep_codigo = ? WHERE per_codigo = ? ";
-            String sie = "UPDATE empleado SET per_codigo = ?, emp_usuario = ?,"
-                    + " emp_password = ?, sal_codigo = ?, WHERE per_codigo ?";
-
             Empleado emp = (Empleado) persona;
-            PreparedStatement statementPersona = conexion.prepareStatement(sip);
+            PreparedStatement statementPersona = conexion.prepareStatement(sqlPersona);
             statementPersona.setLong(1, emp.getCodigo());
             statementPersona.setInt(2, emp.getTipoDocumento());
             statementPersona.setString(3, emp.getDocumentoIdentidad());
@@ -211,20 +205,39 @@ public class EmpleadoDAOJDBCImpl extends AbstracDAOJdbc implements IEmpleadoDAO 
             statementPersona.setString(7, String.valueOf(emp.getSexo()));
             statementPersona.setString(8, emp.getDepartamento().getCodigo());
             statementPersona.setLong(9, codPersonaAnterior);
-            int rowsInserted = statementPersona.executeUpdate();
-            if (rowsInserted <= 0) {
+            int rowsUpdated = statementPersona.executeUpdate();
+            if (rowsUpdated <= 0) {
                 throw new NominaException(1, "No se realizó ninguna operación "
-                        + "de actualización. Favor verificar");
+                        + "de inserción. Favor verificar");
             }
-            PreparedStatement statementEmpleado = conexion.prepareStatement(sie);
+        } catch (ClassNotFoundException ex) {
+            throw new NominaException(1, ex.getMessage());
+        } catch (NominaException ex) {
+            throw ex;
+        } catch (SQLException ex) {
+            throw new NominaException(ex);
+        } finally {
+            try {
+                this.desconectar();
+            } catch (SQLException ex) {
+                Utilidades.printLogToConsole(ex);
+            }
+        }
+    }
+    
+    private void actualizarEmpleado(Empleado emp, Long codPersonaAnterior) throws NominaException {
+        try {
+            this.conectar();
+            String sqlEmpleado = "UPDATE empleado SET per_codigo = ?, emp_usuario = ?,"
+                    + " emp_password = ?, sal_codigo = ? WHERE per_codigo = ?";
+            PreparedStatement statementEmpleado = conexion.prepareStatement(sqlEmpleado);
             statementEmpleado.setLong(1, emp.getCodigo());
             statementEmpleado.setString(2, emp.getUsuario());
             statementEmpleado.setString(3, emp.getPassword());
             statementEmpleado.setString(4, emp.getSalario().getCodigo());
             statementEmpleado.setLong(5, codPersonaAnterior);
-            int rowsInsertedEmp = statementPersona.executeUpdate();
-
-            if (rowsInsertedEmp <= 0) {
+            int rowsUpdated = statementEmpleado.executeUpdate();
+            if (rowsUpdated <= 0) {
                 throw new NominaException(1, "No se realizó ninguna operación "
                         + "de actualización. Favor verificar");
             }
@@ -240,6 +253,16 @@ public class EmpleadoDAOJDBCImpl extends AbstracDAOJdbc implements IEmpleadoDAO 
             }
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void actualizarPersona(Persona persona, Long codPersonaAnterior) throws NominaException {
+        //Se debe actualizar la persona y luego el empleado!
+        this.actualizarDatoPersona(persona, codPersonaAnterior);
+        this.actualizarEmpleado((Empleado) persona, codPersonaAnterior);
+    }
 
     /**
      * {@inheritDoc}
@@ -249,8 +272,9 @@ public class EmpleadoDAOJDBCImpl extends AbstracDAOJdbc implements IEmpleadoDAO 
         try {
             this.conectar();
             String sqlPersona = "DELETE FROM persona WHERE per_codigo = ?";
-            PreparedStatement ps = conexion.prepareStatement(sqlPersona);
-            int rowsDeleted = ps.executeUpdate();
+            PreparedStatement statement = conexion.prepareStatement(sqlPersona);
+            statement.setLong(1, persona.getCodigo());
+            int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted <= 0) {
                 throw new NominaException(1, "No se realizó ninguna operación "
                         + "de eliminación. Favor verificar");

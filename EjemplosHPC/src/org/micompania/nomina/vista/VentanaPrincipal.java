@@ -111,6 +111,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
 
         btnAcerca.setText("Acerca de ...");
+        btnAcerca.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAcercaMouseClicked(evt);
+            }
+        });
         btnAcerca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAcercaActionPerformed(evt);
@@ -208,6 +213,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void btnSalarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSalarioMouseClicked
         vSalario.setVisible(true);
     }//GEN-LAST:event_btnSalarioMouseClicked
+
+    private void btnAcercaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAcercaMouseClicked
+        new VentanaAcerca().setVisible(true);
+    }//GEN-LAST:event_btnAcercaMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAcerca;

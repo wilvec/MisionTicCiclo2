@@ -23,7 +23,7 @@ public class VentanaSalario extends javax.swing.JFrame {
     public VentanaSalario(NominaControlador nominaControlador) {
         this.nomina = nominaControlador;
         initComponents();
-        estaEnModoEdicion = true;
+        estaEnModoEdicion = false;
         this.ponerModoEdicion();
         this.cargarDatosTabla();
     }
@@ -33,7 +33,7 @@ public class VentanaSalario extends javax.swing.JFrame {
         NumberFormat nf = NumberFormat.getCurrencyInstance();
         txtBaseSalarial = new JFormattedTextField(nf);
         txtBaseSalarial.setColumns(10);
-        estaEnModoEdicion = true;
+        estaEnModoEdicion = false;
         this.ponerModoEdicion();
         this.cargarDatosTabla();
     }

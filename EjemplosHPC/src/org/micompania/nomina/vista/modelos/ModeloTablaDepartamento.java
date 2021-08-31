@@ -9,7 +9,7 @@ import org.micompania.nomina.modelo.Departamento;
  *
  * @author GTX1050
  */
-public class ModeloTablaDepto extends AbstractTableModel {
+public class ModeloTablaDepartamento extends AbstractTableModel {
 
     private List<Departamento> deptos;
 
@@ -17,7 +17,7 @@ public class ModeloTablaDepto extends AbstractTableModel {
     private final Class<?>[] clasesColumnas = new Class<?>[]{String.class,
         String.class};
 
-    public ModeloTablaDepto(List<Departamento> deptos) {
+    public ModeloTablaDepartamento(List<Departamento> deptos) {
         this.deptos = deptos;
     }
 
